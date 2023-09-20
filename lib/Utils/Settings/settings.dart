@@ -1,0 +1,3 @@
+const voiceCallToken =
+    '007eJxTYJDpOdT3demtukf7LN2VzlQsYnWoVvS/ox/u08G6KNq4MEyBITnFwCDF0tLCJMXEwsTSIDnRMtHUzDLFMC3J1MgkJdWEpZMztSGQkWFVbTADIxSC+OwMiUUlFQVF+QwMAEnMHrY=';
+const appId = 'cd00d9984d48490ca9a569d1fb524de4';
