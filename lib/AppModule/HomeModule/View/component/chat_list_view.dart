@@ -8,14 +8,17 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../Utils/SizeConfig/size_config.dart';
+import '../../../VoiceChannelModule/View/component/voice_channel_dialog.dart';
 import '../../../VoiceChannelModule/ViewModel/voice_channel_view_model.dart';
 import '../../ViewModel/home_view_model.dart';
 import 'add_new_group_dailog.dart';
 
 class userListView extends StatelessWidget {
-  userListView({Key? key, required this.homeVM, })
-      : super(key: key);
-  
+  userListView({
+    Key? key,
+    required this.homeVM,
+  }) : super(key: key);
+
   final HomeViewModel homeVM;
 
   @override
@@ -23,6 +26,36 @@ class userListView extends StatelessWidget {
     return Platform.isAndroid
         ? Column(
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Channels", style: GoogleFonts.acme(fontSize: 30)),
+                  InkWell(
+                    borderRadius: BorderRadius.circular(10),
+                    onTap: () {
+                      voiceChannelDialog(context: context);
+                    },
+                    onHover: (value) {
+                      homeVM.addnewGroupHover.value = value;
+                    },
+                    child: Obx(
+                      () => Container(
+                        height: SizeConfig.heightMultiplier * 2,
+                        width: SizeConfig.heightMultiplier * 2,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: homeVM.addnewGroupHover.value == false
+                                ? Color(0xff4824E0).withAlpha(150)
+                                : Colors.grey),
+                        child: Icon(
+                          Icons.add,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
               Container(
                 decoration: BoxDecoration(color: Color(0xff3079E2)),
                 width: SizeConfig.widthMultiplier * 30,
@@ -99,12 +132,16 @@ class userListView extends StatelessWidget {
                       ),
                       InkWell(
                         borderRadius: BorderRadius.circular(10),
-                        onTap: () {
+                        onTap: () async {
                           // showAddNewGroupDailog(
                           //     context: context, homeVM: homeVM);
-                          Get.toNamed(AppRoutes.voicChannelView, arguments: [
-                            
-                          ]);
+                          await [Permission.camera, Permission.microphone]
+                              .request()
+                              .then((value) {
+                            Get.toNamed(
+                              AppRoutes.voicChannelView,
+                            );
+                          });
                         },
                         onHover: (value) {
                           homeVM.addnewGroupHover.value = value;
@@ -169,6 +206,36 @@ class userListView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                 Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Channels", style: GoogleFonts.acme(fontSize: 30)),
+                  InkWell(
+                    borderRadius: BorderRadius.circular(10),
+                    onTap: () {
+                      voiceChannelDialog(context: context);
+                    },
+                    onHover: (value) {
+                      homeVM.addnewGroupHover.value = value;
+                    },
+                    child: Obx(
+                      () => Container(
+                        height: SizeConfig.heightMultiplier * 2,
+                        width: SizeConfig.heightMultiplier * 2,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: homeVM.addnewGroupHover.value == false
+                                ? Color(0xff4824E0).withAlpha(150)
+                                : Colors.grey),
+                        child: Icon(
+                          Icons.add,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
@@ -255,8 +322,11 @@ class userListView extends StatelessWidget {
                           onTap: () async {
                             // showAddNewGroupDailog(
                             //     context: context, homeVM: homeVM);
-                            await [Permission.microphone, Permission.camera].request().then((value) => Get.toNamed(AppRoutes.voicChannelView, ));
-                            
+                            await [Permission.microphone, Permission.camera]
+                                .request()
+                                .then((value) => Get.toNamed(
+                                      AppRoutes.voicChannelView,
+                                    ));
                           },
                           onHover: (value) {
                             homeVM.addnewGroupHover.value = value;

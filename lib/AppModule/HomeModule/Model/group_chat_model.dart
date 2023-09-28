@@ -11,7 +11,7 @@ String groupChatModelToJson(List<GroupChatModel> data) =>
 
 class GroupChatModel {
   String? groupName;
-  RxList<User>? user;
+  RxList<Users>? user;
 
   GroupChatModel({
     this.groupName,
@@ -20,7 +20,7 @@ class GroupChatModel {
 
   factory GroupChatModel.fromJson(Map<String, dynamic> json) => GroupChatModel(
         groupName: json["groupName"],
-        user: List<User>.from(json["user"].map((x) => User.fromJson(x))).obs,
+        user: List<Users>.from(json["user"].map((x) => Users.fromJson(x))).obs,
       );
 
   Map<String, dynamic> toJson() => {
@@ -29,19 +29,19 @@ class GroupChatModel {
       };
 }
 
-class User {
+class Users {
   String? name;
   int? id;
   String? image;
   RxBool? isAdd;
-  User({
+  Users({
     this.name,
     this.image,
     this.id,
     this.isAdd,
   });
 
-  factory User.fromJson(Map<String, dynamic> json) => User(
+  factory Users.fromJson(Map<String, dynamic> json) => Users(
         name: json["name"],
         id: json["id"],
         image: json["image"],

@@ -67,7 +67,7 @@ final appTheme = ThemeData(
   cardColor: Colors.black,
   focusColor: Colors.white,
   primaryColor: Colors.white,
-  hoverColor: Colors.white,
+  hoverColor: Colors.black,
   splashColor: Colors.white54,
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
@@ -89,7 +89,7 @@ final appTheme = ThemeData(
         bottomLeft: Radius.circular(50),
       ))),
   textTheme: TextTheme(
-    headlineLarge: GoogleFonts.monoton(
+    headlineLarge: GoogleFonts.acme(
         color: Colors.black54,
         shadows: const [
           BoxShadow(
@@ -100,11 +100,11 @@ final appTheme = ThemeData(
         ],
         // fontSize: 30,
         decoration: TextDecoration.lineThrough),
-    bodyLarge: GoogleFonts.monoton(
+    bodyLarge: GoogleFonts.acme(
       color: Colors.black54,
       // fontSize: 20,
     ),
-    titleLarge: GoogleFonts.monoton(
+    titleLarge: GoogleFonts.acme(
       color: Colors.white,
       // fontSize: 20,
     ),
@@ -120,7 +120,7 @@ final appTheme = ThemeData(
       color: Colors.black,
       // fontSize: 20,
     ),
-    bodyMedium: GoogleFonts.monoton(
+    bodyMedium: GoogleFonts.acme(
       color: Colors.black54,
       // fontSize: 20,
     ),
@@ -223,7 +223,7 @@ final appTheme = ThemeData(
 //             bottomLeft: Radius.circular(50),
 //           ))),
 //       textTheme: TextTheme(
-//           headlineLarge: GoogleFonts.monoton(
+//           headlineLarge: GoogleFonts.acme(
 //               color: Colors.white54,
 //               shadows: const [
 //                 BoxShadow(
@@ -234,11 +234,11 @@ final appTheme = ThemeData(
 //               ],
 //               // fontSize: 30,
 //               decoration: TextDecoration.lineThrough),
-//           bodyLarge: GoogleFonts.monoton(
+//           bodyLarge: GoogleFonts.acme(
 //             color: Colors.white54,
 //             // fontSize: 20,
 //           ),
-//           titleLarge: GoogleFonts.monoton(
+//           titleLarge: GoogleFonts.acme(
 //             color: Colors.black,
 //             // fontSize: 20,
 //           ),
@@ -264,7 +264,7 @@ final appTheme = ThemeData(
 //             color: Colors.white,
 //             // fontSize: 20,
 //           ),
-//           bodyMedium: GoogleFonts.monoton(
+//           bodyMedium: GoogleFonts.acme(
 //             color: Colors.white54,
 //             // fontSize: 20,
 //           ),

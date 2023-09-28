@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "530497869334",
+    "project_id": "artxporchat",
+    "storage_bucket": "artxporchat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:530497869334:android:2a6d2b19f614142ca70737",
+        "android_client_info": {
+          "package_name": "com.example.artxprochatapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBK1jlQoF46YRs-Wmn0vB9xJZqGH8MCqwA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

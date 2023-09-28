@@ -6,5 +6,6 @@ abstract class AppRoutes {
   static const groupView = '/groupView';
   static const profileView = '/profileView';
   static const voicChannelView = '/voiceChannelView';
-
+  static const groupChatSettingView = '/groupCHatSettingView';
+  static const singleChatView = '/singleChatView';
 }

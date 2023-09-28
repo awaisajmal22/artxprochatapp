@@ -7,9 +7,13 @@ import '../AppModule/AuthModule/Login/ViewModel/login_view_model.dart';
 import '../AppModule/AuthModule/SignUp/View/signup_view.dart';
 import '../AppModule/AuthModule/SignUp/ViewModel/signup_view_model.dart';
 import '../AppModule/GroupChatModule/View/group_chat_view.dart';
+import '../AppModule/GroupChatModule/View/group_chat_setting_view.dart';
+import '../AppModule/GroupChatModule/ViewModel/group_chat_view_model.dart';
 import '../AppModule/HomeModule/View/home_view.dart';
 import '../AppModule/HomeModule/ViewModel/home_view_model.dart';
 import '../AppModule/ProfileModule/View/profile_view.dart';
+import '../AppModule/SingleChatModule/View/single_chat_view.dart';
+import '../AppModule/SingleChatModule/ViewModel/single_chat_view_model.dart';
 import '../AppModule/SplashModule/View/splash_view.dart';
 import '../AppModule/SplashModule/ViewModel/splash_view_model.dart';
 import '../AppModule/VoiceChannelModule/View/voice_channel_view.dart';
@@ -44,8 +48,10 @@ class AppPages {
         transition: Transition.fade,
         page: () => HomeView(),
         binding: BindingsBuilder(() {
+          Get.lazyPut(() => GroupChatViewModel());
           Get.lazyPut(() => HomeViewModel());
-           
+          Get.lazyPut(() => LoginViewModel());
+          Get.lazyPut(() => SingleChatViewModel());
         })),
     GetPage(
         name: AppRoutes.groupView,
@@ -53,22 +59,36 @@ class AppPages {
         page: () => GroupChatView(),
         binding: BindingsBuilder(() {
           Get.lazyPut(() => HomeViewModel());
-         
+          Get.lazyPut(() => GroupChatViewModel());
         })),
-         GetPage(
+    GetPage(
         name: AppRoutes.profileView,
         transition: Transition.fade,
         page: () => ProfileView(),
         binding: BindingsBuilder(() {
           Get.lazyPut(() => ProfileViewModel());
         })),
-          GetPage(
+    GetPage(
         name: AppRoutes.voicChannelView,
         transition: Transition.fade,
         page: () => VoiceChannelView(),
         binding: BindingsBuilder(() {
           Get.lazyPut(() => VoiceChannelViewModel());
         })),
-        
+    GetPage(
+        name: AppRoutes.groupChatSettingView,
+        transition: Transition.fade,
+        page: () => GroupChatSettingView(),
+        binding: BindingsBuilder(() {
+          Get.lazyPut(() => GroupChatViewModel());
+        })),
+    GetPage(
+        name: AppRoutes.singleChatView,
+        transition: Transition.fade,
+        page: () => SingleChatView(),
+        binding: BindingsBuilder(() {
+          Get.lazyPut(() => GroupChatViewModel());
+          Get.lazyPut(() => SingleChatViewModel());
+        })),
   ];
 }

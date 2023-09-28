@@ -11,7 +11,9 @@ import '../../../../Utils/TextField/text_form_field.dart';
 import '../ViewModel/login_view_model.dart';
 
 class LoginView extends StatelessWidget {
-  LoginView({Key? key, }) : super(key: key);
+  LoginView({
+    Key? key,
+  }) : super(key: key);
   final loginVM = Get.find<LoginViewModel>();
   @override
   Widget build(BuildContext context) {
@@ -32,6 +34,7 @@ class LoginView extends StatelessWidget {
             child: Column(
               children: [
                 customFormField(
+                  onChange: (value) {},
                   context: context,
                   keyboardType: TextInputType.emailAddress,
                   controller: loginVM.emailController,
@@ -41,6 +44,7 @@ class LoginView extends StatelessWidget {
                   height: SizeConfig.heightMultiplier * 1,
                 ),
                 customFormField(
+                  onChange: (value) {},
                   obsecureText: true,
                   textInputAction: TextInputAction.done,
                   context: context,
@@ -54,7 +58,9 @@ class LoginView extends StatelessWidget {
                 CustomElevatedButton(
                   title: 'Login',
                   onPressed: () {
-                    Get.offAllNamed(AppRoutes.homeView);
+                    loginVM.loginAccount(
+                        email: loginVM.emailController.text,
+                        password: loginVM.passwordController.text);
                   },
                 ),
                 SizedBox(

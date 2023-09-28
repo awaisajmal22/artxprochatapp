@@ -58,7 +58,7 @@ showAddNewGroupDailog({
                           0,
                           GroupChatModel(
                               groupName: homeVM.groupNameController.text,
-                              user: <User>[].obs));
+                              user: <Users>[].obs));
                       homeVM.groupNameController.clear();
 
                       Navigator.of(context).pop();
@@ -129,7 +129,7 @@ Widget addMemberView(
                       ),
                       trailing: GestureDetector(
                         onTap: () {
-                          User user = User(
+                          Users user = Users(
                             id: homeVM.searchList[index].id,
                             image: homeVM.searchList[index].image,
                             isAdd: true.obs,
@@ -189,7 +189,7 @@ Widget addMemberView(
                           //     !homeVM.userList[index].check!.value;
                           // if (homeVM.userList[index].check!.value == true) {
 
-                          User user = User(
+                          Users user = Users(
                             id: homeVM.userList[index].id,
                             image: homeVM.userList[index].image,
                             isAdd: true.obs,

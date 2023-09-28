@@ -2,8 +2,12 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:artxprochatapp/AppModule/AuthModule/SignUp/Model/user_model.dart';
 import 'package:artxprochatapp/AppModule/HomeModule/Model/group_chat_model.dart';
+import 'package:artxprochatapp/RoutesAndBindings/app_routes.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -11,13 +15,17 @@ import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../Utils/SizeConfig/size_config.dart';
 import '../Model/chat_model.dart';
 import 'package:path/path.dart' as path;
 import 'package:record/record.dart';
 
+import '../Model/mobile_tile_model.dart';
+
 class HomeViewModel extends GetxController {
+  RxBool isExpanded = false.obs;
   RxInt selectedTileIndex = (0).obs;
   TextEditingController groupNameController = TextEditingController();
   TextEditingController searchController = TextEditingController();
@@ -34,6 +42,21 @@ class HomeViewModel extends GetxController {
         .toList();
   }
 
+  RxInt selectedMobileTileIndex = (-1).obs;
+  RxList<MobileTileModel> mobileTileList = <MobileTileModel>[
+    MobileTileModel(
+        title: "Create Channel",
+        icon: Icons.voice_chat,
+        onTap: () {
+          Get.toNamed(AppRoutes.voicChannelView, arguments: 'Create Channel');
+        }),
+    MobileTileModel(
+        title: 'Join Channel',
+        icon: Icons.voicemail_outlined,
+        onTap: () {
+          Get.toNamed(AppRoutes.voicChannelView, arguments: 'Join Channel');
+        })
+  ].obs;
   List<ChatModel> userList = <ChatModel>[
     ChatModel(
       id: 1,
@@ -138,10 +161,32 @@ class HomeViewModel extends GetxController {
     }
   }
 
+  // bool get _isAppBarExpanded {
+  //   return silverAppBarScrollController.hasClients &&
+  //       silverAppBarScrollController.offset >
+  //           (SizeConfig.heightMultiplier * 43.1 - kToolbarHeight);
+  // }
+
+  RxBool isAppBarClose = true.obs;
+  void closeSilverScroll() {
+    isAppBarClose.value = false;
+  }
+
   @override
   void onInit() {
-    // TODO: implement onInit
+    // TODO: implement
 
+    // silverAppBarScrollController
+    //   .addListener(() {
+    //     if (silverAppBarScrollController.offset >
+    //         (SizeConfig.heightMultiplier * 43.1 - kToolbarHeight)) {
+    //       isExpanded.value = true;
+    //     } else {
+    //       isExpanded.value = false;
+    //     }
+    // isAppBarPinned.value = _isAppBarExpanded;
+    // });
+    getCurrentUserData();
     audioPlayer;
 
     _recordSub = recoder.onStateChanged().listen((recordState) {
@@ -162,7 +207,7 @@ class HomeViewModel extends GetxController {
     // TODO: implement onClose
     super.onClose();
     recoder.dispose();
-
+    // silverAppBarScrollController.dispose();
     _recordSub?.cancel();
     _amplitudeSub?.cancel();
     audioPlayer.dispose();
@@ -278,5 +323,51 @@ class HomeViewModel extends GetxController {
   Future<void> stopAudioPlay() async {
     await audioPlayer.stop();
     isPlaying.value = false;
+  }
+
+  User? user = FirebaseAuth.instance.currentUser;
+  Rx<UserModel> userData = UserModel().obs;
+  getCurrentUserData() async {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(user!.uid)
+        .snapshots()
+        .listen((data) {
+      if (data.exists) {
+        final model = UserModel.fromJson(data.data() as Map<String, dynamic>);
+        userData.value = model;
+      }
+    });
+    // if (user != null) {
+    //   final data = await FirebaseFirestore.instance
+    //       .collection('users')
+    //       .doc(user!.uid)
+    //       .get();
+
+    //   final model = UserModel.fromJson(data.data()!);
+    //   userData.value = model;
+  }
+
+  final auth = FirebaseAuth.instance;
+  final databaseReference = FirebaseFirestore.instance.collection('users');
+  signOut() async {
+    final current = auth.currentUser!.uid;
+
+    if (current == null) {
+      return;
+    }
+    final userRef = databaseReference.doc(current);
+    userRef.update({
+      "isOnline": false,
+      "lastActive": FieldValue.serverTimestamp()
+    }).then((value) async {
+       final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('email', '');
+        await prefs.setString('password', '');
+        await prefs.setString('uid', '');
+      await auth
+          .signOut()
+          .whenComplete(() => Get.offAllNamed(AppRoutes.loginView));
+    });
   }
 }
