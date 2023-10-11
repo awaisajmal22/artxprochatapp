@@ -48,10 +48,11 @@ class AppPages {
         transition: Transition.fade,
         page: () => HomeView(),
         binding: BindingsBuilder(() {
-          Get.lazyPut(() => GroupChatViewModel());
           Get.lazyPut(() => HomeViewModel());
+
           Get.lazyPut(() => LoginViewModel());
           Get.lazyPut(() => SingleChatViewModel());
+          Get.lazyPut(() => GroupChatViewModel());
         })),
     GetPage(
         name: AppRoutes.groupView,
@@ -89,6 +90,13 @@ class AppPages {
         binding: BindingsBuilder(() {
           Get.lazyPut(() => GroupChatViewModel());
           Get.lazyPut(() => SingleChatViewModel());
+        })),
+         GetPage(
+        name: AppRoutes.groupProfileView,
+        transition: Transition.fade,
+        page: () => GroupProfileView(),
+        binding: BindingsBuilder(() {
+          Get.lazyPut(() => ProfileViewModel());
         })),
   ];
 }

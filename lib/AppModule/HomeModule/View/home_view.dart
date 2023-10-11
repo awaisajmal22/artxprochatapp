@@ -36,126 +36,11 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: Platform.isAndroid
-          ? Drawer(
-              width: SizeConfig.widthMultiplier * 50,
-              child: Obx(
-                () => Column(
-                  children: [
-                    SizedBox(
-                      height: SizeConfig.heightMultiplier * 4,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Get.toNamed(AppRoutes.profileView,
-                            arguments: singleChatVM.userChatList[0]);
-                      },
-                      child: SizedBox(
-                        height: SizeConfig.heightMultiplier * 20,
-                        width: SizeConfig.widthMultiplier * 30,
-                        child: Stack(
-                          children: [
-                            Container(
-                              height: SizeConfig.heightMultiplier * 20,
-                              width: SizeConfig.widthMultiplier * 30,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: homeVM.userData.value.image == ''
-                                      ? null
-                                      : DecorationImage(
-                                          image: NetworkImage(
-                                              homeVM.userData.value.image!),
-                                          fit: BoxFit.cover)),
-                              child: singleChatVM.usersList[0].userImage == ''
-                                  ? Icon(Icons.person)
-                                  : null,
-                            ),
-                            Positioned(
-                                top: SizeConfig.heightMultiplier * 2,
-                                left: SizeConfig.widthMultiplier * 2,
-                                child: Container(
-                                  height: SizeConfig.heightMultiplier * 4,
-                                  width: SizeConfig.widthMultiplier * 6,
-                                  decoration: BoxDecoration(
-                                      color:
-                                          homeVM.userData.value.isOnline == true
-                                              ? Colors.green
-                                              : Colors.grey,
-                                      shape: BoxShape.circle),
-                                ))
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: SizeConfig.heightMultiplier * 1,
-                    ),
-                    Text(
-                      homeVM.userData.value.name!,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(color: Colors.white),
-                    ),
-                    SizedBox(
-                      height: SizeConfig.heightMultiplier * 2,
-                    ),
-                    Obx(
-                      () => Column(
-                        children: List.generate(
-                          homeVM.mobileTileList.length,
-                          (index) => ListTile(
-                            onTap: () {
-                              print("Print" + "${voiceVM.channelList.length}");
-                              homeVM.mobileTileList[index].onTap!();
-                              homeVM.selectedMobileTileIndex.value = index;
-                            },
-                            tileColor:
-                                homeVM.selectedMobileTileIndex.value == index
-                                    ? Colors.white.withAlpha(150)
-                                    : Colors.black,
-                            leading: Icon(
-                              homeVM.mobileTileList[index].icon,
-                              color:
-                                  homeVM.selectedMobileTileIndex.value == index
-                                      ? Colors.black
-                                      : Colors.white,
-                            ),
-                            title: Text(
-                              homeVM.mobileTileList[index].title!,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(
-                                      color: homeVM.selectedMobileTileIndex
-                                                  .value ==
-                                              index
-                                          ? Colors.black
-                                          : Colors.white),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: SizeConfig.widthMultiplier * 10),
-                      child: CustomElevatedButton(
-                          title: 'Logout',
-                          onPressed: () {
-                            homeVM.signOut();
-                          }),
-                    ),
-                    SizedBox(
-                      height: SizeConfig.heightMultiplier * 1,
-                    ),
-                    SizedBox(
-                      height: SizeConfig.heightMultiplier * 2,
-                    )
-                  ],
-                ),
-              ),
-            )
+          ? mobileDrawer(
+              groupVM: groupVM,
+              singleChatVM: singleChatVM,
+              homeVM: homeVM,
+              voiceVM: voiceVM)
           : null,
       key: _scaffoldKey,
       body: Platform.isWindows
@@ -320,6 +205,137 @@ class HomeView extends StatelessWidget {
               homeVM: homeVM,
               scaffoldKey: _scaffoldKey,
               groupVM: groupVM),
+    );
+  }
+}
+
+class mobileDrawer extends StatelessWidget {
+  mobileDrawer(
+      {super.key,
+      required this.singleChatVM,
+      required this.homeVM,
+      required this.voiceVM,
+      required this.groupVM});
+
+  final SingleChatViewModel singleChatVM;
+  final HomeViewModel homeVM;
+  final VoiceChannelViewModel voiceVM;
+  final GroupChatViewModel groupVM;
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      width: SizeConfig.widthMultiplier * 50,
+      child: Obx(
+        () => Column(
+          children: [
+            SizedBox(
+              height: SizeConfig.heightMultiplier * 4,
+            ),
+            GestureDetector(
+              onTap: () {
+                Get.toNamed(
+                  AppRoutes.profileView,
+                  arguments: singleChatVM.userChatList[0].obs,
+                );
+              },
+              child: SizedBox(
+                height: SizeConfig.heightMultiplier * 20,
+                width: SizeConfig.widthMultiplier * 30,
+                child: Stack(
+                  children: [
+                    Container(
+                      height: SizeConfig.heightMultiplier * 20,
+                      width: SizeConfig.widthMultiplier * 30,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: homeVM.userData.value.image == ''
+                              ? null
+                              : DecorationImage(
+                                  image: NetworkImage(
+                                      homeVM.userData.value.image!),
+                                  fit: BoxFit.cover)),
+                      child: homeVM.userData.value.image == ''
+                          ? Icon(Icons.person)
+                          : null,
+                    ),
+                    Positioned(
+                        top: SizeConfig.heightMultiplier * 2.5,
+                        left: SizeConfig.widthMultiplier * 2,
+                        child: Container(
+                          height: SizeConfig.heightMultiplier * 4,
+                          width: SizeConfig.widthMultiplier * 6,
+                          decoration: BoxDecoration(
+                              color: homeVM.userData.value.isOnline == true
+                                  ? Colors.green
+                                  : Colors.grey,
+                              shape: BoxShape.circle),
+                        ))
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(
+              height: SizeConfig.heightMultiplier * 1,
+            ),
+            Text(
+              homeVM.userData.value.name!,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium!
+                  .copyWith(color: Colors.white),
+            ),
+            SizedBox(
+              height: SizeConfig.heightMultiplier * 2,
+            ),
+            Obx(
+              () => Column(
+                children: List.generate(
+                  homeVM.mobileTileList.length,
+                  (index) => ListTile(
+                    onTap: () {
+                      homeVM.mobileTileList[index].onTap!();
+                      homeVM.selectedMobileTileIndex.value = index;
+                    },
+                    tileColor: homeVM.selectedMobileTileIndex.value == index
+                        ? Colors.white.withAlpha(150)
+                        : Colors.black,
+                    leading: Icon(
+                      homeVM.mobileTileList[index].icon,
+                      color: homeVM.selectedMobileTileIndex.value == index
+                          ? Colors.black
+                          : Colors.white,
+                    ),
+                    title: Text(
+                      homeVM.mobileTileList[index].title!,
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: homeVM.selectedMobileTileIndex.value == index
+                              ? Colors.black
+                              : Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const Spacer(),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: SizeConfig.widthMultiplier * 10),
+              child: CustomElevatedButton(
+                  title: 'Logout',
+                  onPressed: () {
+                    homeVM.signOut();
+                    // groupVM.updateFcmTokenList();
+                  }),
+            ),
+            SizedBox(
+              height: SizeConfig.heightMultiplier * 1,
+            ),
+            SizedBox(
+              height: SizeConfig.heightMultiplier * 2,
+            )
+          ],
+        ),
+      ),
     );
   }
 }

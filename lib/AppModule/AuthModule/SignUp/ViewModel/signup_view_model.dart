@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:artxprochatapp/Utils/Toast/toast.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,8 +18,7 @@ class SignUpViewModel extends GetxController {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   RxString imagePath = ''.obs;
-  final emailValid = RegExp(
-      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+  final emailValid = RegExp(r'@(.+)$');
   final pickedImage = ImagePicker();
   Future getImageFormCamera() async {
     final selectedImage =
@@ -42,15 +42,18 @@ class SignUpViewModel extends GetxController {
     BottomSheetModel(title: 'Delete current photo', leadingIcon: Icons.delete),
   ];
   final auth = FirebaseAuth.instance;
+  String targetDomain = "simboz.com";
 
   signUp(String email, String password, String name, String image) async {
+    Match match = emailValid.firstMatch(email) as Match;
+    String domain = match.group(1)!;
     if (name.length < 3) {
       return toast(
           title: 'Please Enter Valid Name..', backgroundColor: Colors.black);
-    }
-    if (!emailValid.hasMatch(email)) {
+    } else if (domain != targetDomain && match.groupCount >= 1) {
       return toast(
-          title: 'Please Enter Valid Email..', backgroundColor: Colors.black);
+          title: 'Please use our domain @simboz.com',
+          backgroundColor: Colors.black);
     } else if (password.length < 4) {
       return toast(
           title: 'Password Length must be more than 4 Characters..',
@@ -98,6 +101,8 @@ class SignUpViewModel extends GetxController {
     userModel.email = user!.email;
     userModel.name = name;
     userModel.uid = user.uid;
+    userModel.lastActive = Timestamp.now();
+    userModel.fmcToken = await FirebaseMessaging.instance.getToken();
 
     await firebaseFirestore
         .collection("users")

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,9 +32,10 @@ class LoginViewModel extends GetxController {
         if (uid == null) {
           return;
         }
+        final fcmToken = await FirebaseMessaging.instance.getToken();
         final userRef = databaseReference.doc(uid.user!.uid);
         userRef.update(
-            {"isOnline": true, "lastActive": FieldValue.serverTimestamp()});
+            {"isOnline": true, "lastActive": FieldValue.serverTimestamp(), "fmcToken": fcmToken});
         Get.offAllNamed(AppRoutes.homeView);
       }).catchError((e) {
         String characterToRemoveBefore = "]";

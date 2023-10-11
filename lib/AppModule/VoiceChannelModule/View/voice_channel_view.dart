@@ -1,163 +1,5 @@
-// import 'package:artxprochatapp/AppModule/VoiceChannelModule/ViewModel/voice_channel_view_model.dart';
-// import 'package:artxprochatapp/Utils/SizeConfig/size_config.dart';
-// import 'package:flutter/material.dart';
+import 'dart:async';
 
-// import 'package:flutter/src/foundation/key.dart';
-// import 'package:flutter/src/widgets/framework.dart';
-// import 'package:flutter/src/widgets/placeholder.dart';
-// import 'package:get/get.dart';
-
-// import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
-// import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
-
-// class VoiceChannelView extends StatelessWidget {
-//   VoiceChannelView({Key? key}) : super(key: key);
-//   final voiceVM = Get.find<VoiceChannelViewModel>();
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         automaticallyImplyLeading: false,
-//         leading: GestureDetector(
-//           onTap: () {
-//             voiceVM.engine.leaveChannel();
-//             Get.back();
-//           },
-//           child: Icon(Icons.arrow_back),
-//         ),
-//         backgroundColor: Colors.black,
-//         title: Text('${voiceVM.channelController.text}'),
-//         centerTitle: true,
-//       ),
-//       body: Obx(
-//         () => voiceVM.loading.value
-//             ? const CircularProgressIndicator()
-//             : Stack(
-//                 children: [
-//                   Center(
-//                     child: _remoteVideo(
-//                       voiceVM: voiceVM,
-//                       context: context,
-//                     ),
-//                   ),
-//                   SizedBox(
-//                     height: SizeConfig.heightMultiplier * 90,
-//                     width: SizeConfig.heightMultiplier * 90,
-//                     child: Stack(
-//                       children: [
-//                         Obx(
-//                           () => Positioned(
-//                             top: voiceVM.yPosition.value,
-//                             left: voiceVM.xPosition.value,
-//                             child: GestureDetector(
-//                               onPanUpdate: (value) {
-//                                 if (value.delta.dx < 0 ||
-//                                     value.delta.dy < 0 ||
-//                                     value.delta.dy > 80.toDouble() ||
-//                                     value.delta.dx > 80.toDouble()) {
-//                                   voiceVM.yPosition.value = 0;
-//                                   voiceVM.xPosition.value = 0;
-//                                 } else {
-//                                   voiceVM.yPosition.value = value.delta.dy;
-//                                   voiceVM.xPosition.value = value.delta.dx;
-//                                 }
-//                               },
-//                               child: SizedBox(
-//                                   height: SizeConfig.heightMultiplier * 10,
-//                                   width: SizeConfig.widthMultiplier * 20,
-//                                   child: const RtcLocalView.SurfaceView()),
-//                             ),
-//                           ),
-//                         )
-//                       ],
-//                     ),
-//                   )
-//                 ],
-//               ),
-//       ),
-//     );
-//   }
-// }
-
-// Widget _remoteVideo({
-//   required VoiceChannelViewModel voiceVM,
-//   required BuildContext context,
-// }) {
-//   return SizedBox(child: Obx(() {
-//     if (voiceVM.remoteID.isNotEmpty) {
-//       if (voiceVM.remoteID.length == 1) {
-//         return SizedBox(
-//           height: double.maxFinite,
-//           width: double.maxFinite,
-//           child: Obx(
-//             () => RtcRemoteView.SurfaceView(
-//               uid: voiceVM.remoteID[0],
-//               channelId: voiceVM.channelController.text,
-//             ),
-//           ),
-//         );
-//       } else if (voiceVM.remoteID.length == 2) {
-//         return Column(
-//           children: [
-//             SizedBox(
-//               height: SizeConfig.heightMultiplier * 50,
-//               width: double.infinity,
-//               child: Obx(
-//                 () => RtcRemoteView.SurfaceView(
-//                   uid: voiceVM.remoteID[1],
-//                   channelId: voiceVM.channelController.text,
-//                 ),
-//               ),
-//             ),
-//             SizedBox(
-//               height: SizeConfig.heightMultiplier * 50,
-//               width: double.infinity,
-//               child: Obx(
-//                 () => RtcRemoteView.SurfaceView(
-//                   uid: voiceVM.remoteID[2],
-//                   channelId: voiceVM.channelController.text,
-//                 ),
-//               ),
-//             )
-//           ],
-//         );
-//       } else {
-//         return SizedBox(
-//           height: SizeConfig.heightMultiplier * 100,
-//           width: SizeConfig.widthMultiplier * 100,
-//           child: Obx(
-//             () => GridView.builder(
-//               itemCount: voiceVM.remoteID.length,
-//               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-//                 maxCrossAxisExtent: 200,
-//                 childAspectRatio: 11 / 20,
-//                 crossAxisSpacing: 5,
-//                 mainAxisSpacing: 10,
-//               ),
-//               itemBuilder: (context, index) {
-//                 return Container(
-//                   alignment: Alignment.center,
-//                   decoration: BoxDecoration(
-//                     color: Colors.black,
-//                     borderRadius: BorderRadius.circular(10),
-//                   ),
-//                   child: RtcRemoteView.SurfaceView(
-//                     uid: voiceVM.remoteID[index],
-//                     channelId: voiceVM.channelController.text,
-//                   ),
-//                 );
-//               },
-//             ),
-//           ),
-//         );
-//       }
-//     } else {
-//       return const Center(
-//         child: Text('Waiting for other users to Join'),
-//       );
-//     }
-//   }));
-// }
 import 'package:artxprochatapp/AppModule/VoiceChannelModule/ViewModel/voice_channel_view_model.dart';
 import 'package:artxprochatapp/Utils/SizeConfig/size_config.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -176,7 +18,7 @@ class VoiceChannelView extends StatefulWidget {
 
 class _VoiceChannelViewState extends State<VoiceChannelView> {
   final _formKey = GlobalKey<FormState>();
-
+  final channelVM = Get.put(VoiceChannelViewModel());
   late final FocusNode _unfocusNode;
   late final TextEditingController _channelNameController;
 
@@ -222,7 +64,7 @@ class _VoiceChannelViewState extends State<VoiceChannelView> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    if (voiceChannelVM.channelList.contains(_channelNameController.text)) {
+    if (voiceChannelVM.channelsList.contains(_channelNameController.text)) {
       return _showSnackBar(context, 'Channel Already Created');
     } else {
       FocusScope.of(context).requestFocus(_unfocusNode);
@@ -253,7 +95,15 @@ class _VoiceChannelViewState extends State<VoiceChannelView> {
                 channelName: _channelNameController.text,
                 token: token,
               ),
-            );
+            ).whenComplete(() async {
+              await channelVM.createChannel(
+                  channel: ChannelNameModel(
+                      channelName: _channelNameController.text, token: token));
+              await Timer.periodic(Duration(seconds: 3600), (timer) async {
+                await channelVM.removeChannel(
+                    channelName: _channelNameController.text);
+              });
+            });
             voiceChannelVM.channelsList.insert(
                 0,
                 ChannelNameModel(
@@ -361,11 +211,13 @@ class _VoiceChannelViewState extends State<VoiceChannelView> {
                                   ),
                                 ),
                               ),
-                              const Padding(
+                              Padding(
                                 padding:
                                     EdgeInsetsDirectional.only(bottom: 24.0),
                                 child: Text(
-                                  'Enter a channel name to generate token. The token will be valid for 1 hour.',
+                                  widget.channelTile.contains("Create Channel")
+                                      ? 'Enter a channel name to generate token. The token will be valid for 1 hour.'
+                                      : 'You can join whatever channel you want but the channel is expire after completing the time given by admin',
                                   style: TextStyle(
                                     color: Colors.grey,
                                     fontSize: 16.0,
@@ -523,12 +375,14 @@ class _VoiceChannelViewState extends State<VoiceChannelView> {
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .bodySmall!
-                                                .copyWith(color: Colors.black),
+                                                .copyWith(
+                                                    color: Colors.black,
+                                                    fontSize: 30),
                                           ),
                                         ),
                                         SizedBox(
                                           height:
-                                              SizeConfig.heightMultiplier * 1,
+                                              SizeConfig.heightMultiplier * 0.5,
                                         )
                                       ],
                                     );

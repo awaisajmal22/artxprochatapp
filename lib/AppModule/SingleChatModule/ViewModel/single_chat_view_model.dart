@@ -1,26 +1,38 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:artxprochatapp/Utils/Toast/toast.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:gallery_saver/files.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'dart:ui' as ui;
 
 import '../../AuthModule/SignUp/Model/user_model.dart';
+import '../../Services/single_chat_notification_firebase_services.dart';
+import '../../Services/firebase_services.dart';
+import '../Model/notification_model.dart';
 import '../Model/users_model.dart';
 import 'package:path/path.dart' as path;
+import 'package:http/http.dart' as http;
 
 class SingleChatViewModel extends GetxController {
   final singleChatController = TextEditingController();
   final searchController = TextEditingController();
   RxInt textFieldTextLenght = 26.obs;
-
+  final scrollController = ScrollController();
   RxInt textFieldLines = 1.obs;
+  RxString senderUID = ''.obs;
   String checkDate(String dateString) {
     DateTime checkedTime = DateTime.parse(dateString);
     DateTime currentTime = DateTime.now();
@@ -47,86 +59,17 @@ class SingleChatViewModel extends GetxController {
         .toList();
   }
 
-  RxList<UsersModel> usersList = <UsersModel>[
-    UsersModel(
-        groupCreatedBy: true.obs,
-        id: 1,
-        userImage:
-            'https://images.pexels.com/photos/18125927/pexels-photo-18125927/free-photo-of-woman-on-the-stairwell-of-a-parking-garage.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load',
-        userName: 'Umer',
-        message: [
-          Message(
-            dateTime: '2023-09-25 05:00:00.000Z',
-            isUserSide: true,
-            isReaded: false,
-            msg: 'hi How are you',
-          )
-        ].obs),
-    UsersModel(
-        groupCreatedBy: false.obs,
-        id: 2,
-        userImage:
-            'https://images.pexels.com/photos/18377390/pexels-photo-18377390/free-photo-of-city-street-building-pattern.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load',
-        userName: 'Jamal',
-        message: [
-          Message(
-            dateTime: '2022-08-08 05:00:00.000Z',
-            isUserSide: true,
-            isReaded: false,
-            msg: 'hi How are you',
-          ),
-          Message(
-            dateTime: '2022-08-08 02:00:00.000Z',
-            isUserSide: true,
-            isReaded: false,
-            msg: 'kick you',
-          ),
-          Message(
-            dateTime: '2022-08-07 05:00:00.000Z',
-            isUserSide: true,
-            isReaded: true,
-            msg: 'kick you',
-          ),
-          Message(
-            dateTime: '2022-08-06 05:00:00.000Z',
-            isUserSide: true,
-            isReaded: true,
-            msg: 'kick you',
-          )
-        ].obs),
-    UsersModel(
-        groupCreatedBy: false.obs,
-        id: 3,
-        userImage:
-            'https://images.pexels.com/photos/15488686/pexels-photo-15488686/free-photo-of-red-cabriolet-car-with-flowers-arrangement.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load',
-        userName: 'Kashif',
-        message: <Message>[].obs),
-    UsersModel(
-        groupCreatedBy: false.obs,
-        id: 4,
-        userImage:
-            'https://images.pexels.com/photos/12792408/pexels-photo-12792408.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load',
-        userName: 'Jahan',
-        message: <Message>[].obs)
-  ].obs;
-  RxList<Messages> messages = <Messages>[].obs;
-  recieveMessages() async {
-    final data = await FirebaseFirestore.instance
-        .collection('messages')
-        .where('receiverUid',
-            isEqualTo: currentUser) // Filter messages for the current user
-        .orderBy('dateTime',
-            descending: true) // Order by timestamp (newest first)
-        .snapshots();
-    messages.addAll(data as Iterable<Messages>);
-  }
+  RxList<UserModel> usersList = <UserModel>[].obs;
+  //
 
+  RxBool isFileUploading = false.obs;
   FilePickerResult? result;
   Future<void> sendMessage({
     required String msg,
+    required String recieverToken,
     required bool isPickedFile,
-    required String senderUID,
     required String receiverUID,
+    required UserModel currentUser
   }) async {
     String fileUrl;
     if (isPickedFile == true) {
@@ -136,150 +79,129 @@ class SingleChatViewModel extends GetxController {
       );
 
       if (result != null) {
+        isFileUploading.value = true;
         Reference storage = FirebaseStorage.instance.ref().child(
             'Messages/[messages-${DateTime.now().microsecondsSinceEpoch.toString()}');
         await storage.putFile(File(result!.files.first.path!));
+
         await storage.getDownloadURL().then((value) async {
+           final notification = Notifications(
+          senderId: currentUser .uid,
+          title: currentUser.name,
+          description: result!.files.first.name,
+          type: 'file',
+          subId: receiverUID,
+          id: currentUser.uid);
+     
           final message = Message(
-            senderUid: senderUID,
+            senderUid: currentUser.uid,
             receiverUid: receiverUID,
             messageType: MessageType.text,
             msg: result!.files.first.name,
             isReaded: false,
             file: value,
+            fmcToken: recieverToken,
+            emoji: '',
             dateTime: DateTime.now().toIso8601String(),
           );
-          await _addMesageToChat(receiverUID: receiverUID, message: message);
+          isFileUploading.value = false;
+          await FirebaseMessagesServices()
+              .addMesageToChat(receiverUID: receiverUID, message: message); await FirebaseMessagesServices.saveNotification(
+        notification,
+        message,
+      );
         });
-
-        // usersModel.message!.insert(
-        //     0,
-        //     Message(
-        //       file: File(result!.files[0].path!),
-        //       isReaded: true,
-        //       dateTime: DateTime.now().toIso8601String(),
-        //       isUserSide: true,
-        //       msg: result?.files[0].name,
-        //     ));
+       
       }
     } else {
-      // await FirebaseFirestore.instance.collection('messages').add({
-      //   'senderUid': senderUID,
-      //   'receiverUid': receiverUID,
-      //   'dateTime': DateTime.now().toIso8601String(),
-      //   'isReaded': false,
-      //   'isUserSide': false,
-      //   'file': '',
-      //   msg: msg,
-      // });
+      final notification = Notifications(
+          senderId: currentUser .uid,
+          title: currentUser.name,
+          description: msg,
+          type: 'text',
+          subId: receiverUID,
+          id: currentUser.uid);
       final message = Message(
-        senderUid: senderUID,
+        senderUid: currentUser.uid,
         receiverUid: receiverUID,
         messageType: MessageType.text,
         msg: msg,
         isReaded: false,
+        fmcToken: recieverToken,
+        emoji: '',
         dateTime: DateTime.now().toIso8601String(),
       );
       singleChatController.clear();
       textFieldTextLenght.value = 26;
       textFieldLines.value = 1;
-      await _addMesageToChat(receiverUID: receiverUID, message: message);
+      senderUID.value = message.senderUid!;
+      await FirebaseMessagesServices()
+          .addMesageToChat(receiverUID: receiverUID, message: message);
+
+      await FirebaseMessagesServices.saveNotification(
+        notification,
+        message,
+      );
+
       print('you picked only 3 files');
       return;
     }
     // Do something with the selected files
   }
 
-  _addMesageToChat({
-    required String receiverUID,
-    required Message message,
-  }) async {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('chat')
-        .doc(receiverUID)
-        .collection('messages')
-        .add(message.toJson());
-
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(receiverUID)
-        .collection('chat')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('messages')
-        .add(message.toJson());
-  }
-
+  RxBool displayEmoji = false.obs;
+  RxInt selectedEmojiIndex = (-1).obs;
   String getImageAccordingExtension(String path) {
     if (path.contains('zip')) {
       return 'assets/images/zip.jpeg';
+    } else if (path.contains('.pdf')) {
+      return 'assets/images/pdf.png';
     } else {
       return 'assets/images/doc.png';
     }
+  }
+
+  updateEmojie({
+    required String senderUID,
+    required String emoji,
+    required String docUID,
+  }) async {
+    await FirebaseMessagesServices()
+        .updateEmoji(senderUID: senderUID, emoji: emoji, docUID: docUID);
   }
 
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    getUsersList();
+    getUsers();
+  
     // recieveMessages();
   }
 
+  RxList emojiList = [
+    'assets/icons/like.svg',
+    'assets/icons/heart.svg',
+    'assets/icons/ok.svg',
+    'assets/icons/hand.svg',
+    'assets/icons/open-face-smile.svg',
+    'assets/icons/joy.svg'
+  ].obs;
   final currentUser = FirebaseAuth.instance.currentUser;
 
-  CollectionReference usersCollection =
-      FirebaseFirestore.instance.collection('users');
   RxList<UserModel> userChatList = <UserModel>[].obs;
-  Future<List<UserModel>> getUsersList() async {
-    // Get the current user
-
-    final currentUserUID = currentUser?.uid;
-
-    // Query the Firestore collection containing user data
-    // final usersCollection = FirebaseFirestore.instance.collection('users');
-    usersCollection
-        .orderBy('lastActive', descending: true)
-        .snapshots(includeMetadataChanges: true)
-        .listen((data) {
-      userChatList.value = data.docs
-          .map((e) => UserModel.fromJson(e.data() as Map<String, dynamic>))
-          .toList();
-    });
-
-    // for (final doc in querySnapshot.docs) {
-    //   // Exclude the current user from the list
-    //   if (doc.id != currentUserUID) {
-    //     userChatList.add(
-    //       UserModel(
-    //           uid: doc.id,
-    //           name: doc['name'],
-    //           email: doc['email'],
-    //           image: doc['image'],
-    //           isOnline: doc['isOnline'],
-    //           lastActive: doc['lastActive']),
-    //     );
-    //   }
-    // }
-
-    return userChatList;
+  getUsers() async {
+    userChatList.value = await FirebaseUserServices().getUsersList();
+    if (userChatList.isNotEmpty) {
+      for (var element in userChatList) {
+        if (element.isMessage == true) {
+          usersList.value = userChatList;
+          print(usersList.length);
+        }
+      }
+    }
   }
 
-  // sendMessages(
-  //     {required String revciverUid,
-  //     required String msg,
-  //     required String file,
-  //     required String name,
-  //     required String image}) async {
-  //   final user = await FirebaseAuth.instance.currentUser;
-  //   final senderUid = user!.uid;
-  //   String fileUrl = '';
-  //   if (file != '') {}
-  //   // Create a new message document in Firestore
-
-  //   // Clear the message input field
-  // }
   Rx<UserModel> singleUser = UserModel().obs;
   UserModel? getUserByID({required String uid}) {
     FirebaseFirestore.instance
@@ -289,7 +211,20 @@ class SingleChatViewModel extends GetxController {
         .listen((user) {
       singleUser.value = UserModel.fromJson(user.data()!);
     });
+    return singleUser.value;
   }
+
+  // Rx<UserModel> currentUserData = UserModel().obs;
+  // getCurrentUser() async {
+  //   FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(currentUser!.uid)
+  //       .snapshots()
+  //       .listen((user) {
+  //     currentUserData.value = UserModel.fromJson(user.data()!);
+  //   });
+  //   return currentUserData.value;
+  // }
 
   RxList<Message> messagesList = <Message>[].obs;
   List<Message> getMessages({required String receiverUid}) {
@@ -304,8 +239,106 @@ class SingleChatViewModel extends GetxController {
         .listen((msgData) {
       messagesList.value =
           msgData.docs.map((e) => Message.fromJson(e.data())).toList();
-          
+      scrollDOwn();
     });
     return messagesList;
+  }
+
+  void scrollDOwn() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (scrollController.hasClients) {
+        scrollController.jumpTo(scrollController.position.maxScrollExtent);
+      }
+    });
+  }
+
+  final Dio dio = Dio();
+  RxBool downloadingFile = false.obs;
+  RxDouble progress = (0.0).obs;
+  Future<bool> download(String url, String fileName) async {
+    Directory directory;
+    try {
+      if (Platform.isAndroid) {
+        if (await _requestPermission(Permission.storage) &&
+            // access media location needed for android 10/Q
+            await _requestPermission(Permission.accessMediaLocation) &&
+            await _requestPermission(Permission.manageExternalStorage)) {
+          directory = (await getExternalStorageDirectory())!;
+          String newPath = "";
+          print(directory);
+          List<String> paths = directory.path.split("/");
+          for (int x = 1; x < paths.length; x++) {
+            String folder = paths[x];
+            if (folder != "Android") {
+              newPath += "/$folder";
+            } else {
+              break;
+            }
+          }
+          newPath = "$newPath/ArtxPro";
+          directory = Directory(newPath);
+          print(directory.path);
+        } else {
+          return false;
+        }
+      } else {
+        if (await _requestPermission(Permission.photos)) {
+          directory = await getTemporaryDirectory();
+        } else {
+          return false;
+        }
+      }
+      File saveFile = File("${directory.path}/$fileName");
+      if (!await directory.exists()) {
+        await directory.create(
+          recursive: true,
+        );
+        print('Directory Created');
+      }
+      if (await directory.exists()) {
+        await dio.download(url, saveFile.path,
+            onReceiveProgress: (value1, value2) {
+          progress.value = value1 / value2;
+        });
+
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> _requestPermission(Permission permission) async {
+    if (await permission.isGranted) {
+      return true;
+    } else {
+      var result = await permission.request();
+      if (result == PermissionStatus.granted) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  downloadFile(String url, String fileName) async {
+    downloadingFile.value = true;
+    progress.value = 0;
+
+    bool downloaded = await download("$url" "/$fileName", fileName);
+    if (downloaded) {
+      toast(
+          title: 'Downloading Successfull',
+          backgroundColor: Colors.black,
+          gravity: ToastGravity.CENTER);
+    } else {
+      toast(
+          title: 'Something went wrong..',
+          backgroundColor: Colors.black,
+          gravity: ToastGravity.CENTER);
+    }
+
+    downloadingFile.value = false;
   }
 }

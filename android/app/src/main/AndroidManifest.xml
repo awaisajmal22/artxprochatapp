@@ -5,6 +5,7 @@
    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
    <uses-permission android:name="android.permission.RECORD_AUDIO" />
    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/>
    <uses-permission android:name="android.permission.INTERNET" />
    <uses-permission android:name="android.permission.RECORD_AUDIO" />
    <uses-permission android:name="android.permission.CAMERA" />
@@ -12,15 +13,16 @@
    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
    <uses-permission android:name="android.permission.BLUETOOTH" />
    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-
    <uses-permission android:name="android.permission.WAKE_LOCK" />
-   <!-- <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE" 
-    tools:ignore="ProtectedPermissions" /> -->
+   <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+   
    <application
-        android:label="artxprochatapp"
+        android:requestLegacyExternalStorage="true"
+        android:label="ArtxPro"
         android:name="${applicationName}"
-         android:usesCleartextTraffic="true"
-        android:icon="@mipmap/ic_launcher">
+        
+        android:usesCleartextTraffic="true"
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:exported="true"

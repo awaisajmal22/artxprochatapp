@@ -33,9 +33,7 @@ showTextNewUserDialog({
 
                   if (singleChatVM.searchController.text.isEmpty) {
                     singleChatVM.searchList.value = [];
-                  }else {
-                    
-                  }
+                  } else {}
                 },
                 context: context,
                 keyboardType: TextInputType.text,
@@ -59,28 +57,51 @@ showTextNewUserDialog({
                             children: [
                               Obx(
                                 () => ListTile(
-                                  subtitle: singleChatVM.searchList.isNotEmpty
-                                      ? Text(
-                                          singleChatVM.searchList[index]
-                                                      .isOnline ==
-                                                  true
-                                              ? "Active"
-                                              : "Last Active: ${timeago.format(singleChatVM.searchList[index].lastActive!.toDate())}",
-                                          maxLines: 2,
-                                        )
-                                      : Text(
-                                          singleChatVM.userChatList[index]
-                                                      .isOnline ==
-                                                  true
-                                              ? "Active"
-                                              : "Last Active: ${timeago.format(singleChatVM.userChatList[index].lastActive!.toDate())}",
-                                          maxLines: 2,
-                                        ),
+                                  subtitle: singleChatVM
+                                              .userChatList[index].isOnline ==
+                                          null
+                                      ? SizedBox.shrink()
+                                      : singleChatVM.searchList.isNotEmpty
+                                          ? Text(
+                                              singleChatVM.searchList[index]
+                                                          .isOnline ==
+                                                      true
+                                                  ? "Active"
+                                                  : "Last Active: ${timeago.format(singleChatVM.searchList[index].lastActive!.toDate())}",
+                                              maxLines: 2,
+                                            )
+                                          : Text(
+                                              singleChatVM.userChatList[index]
+                                                          .lastActive ==
+                                                      null
+                                                  ? ''
+                                                  : singleChatVM
+                                                              .userChatList[
+                                                                  index]
+                                                              .isOnline ==
+                                                          true
+                                                      ? "Active"
+                                                      : "Last Active: ${timeago.format(singleChatVM.userChatList[index].lastActive!.toDate())}",
+                                              maxLines: 2,
+                                            ),
                                   onTap: () {
                                     Get.back();
-                                    singleChatVM.getUserByID(uid: singleChatVM.searchList.isNotEmpty ? singleChatVM.searchList[index].uid! :  singleChatVM.userChatList[index].uid!);
-                                    singleChatVM.getMessages(receiverUid: singleChatVM.searchList.isNotEmpty ? singleChatVM.searchList[index].uid! :  singleChatVM.userChatList[index].uid!);
-                                    Get.toNamed(AppRoutes.singleChatView,);
+                                    singleChatVM.getUserByID(
+                                        uid: singleChatVM.searchList.isNotEmpty
+                                            ? singleChatVM
+                                                .searchList[index].uid!
+                                            : singleChatVM
+                                                .userChatList[index].uid!);
+                                    singleChatVM.getMessages(
+                                        receiverUid:
+                                            singleChatVM.searchList.isNotEmpty
+                                                ? singleChatVM
+                                                    .searchList[index].uid!
+                                                : singleChatVM
+                                                    .userChatList[index].uid!);
+                                    Get.toNamed(
+                                      AppRoutes.singleChatView,
+                                    );
                                   },
                                   leading: SizedBox(
                                     height: SizeConfig.heightMultiplier * 8,

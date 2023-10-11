@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:artxprochatapp/AppModule/AuthModule/SignUp/Model/user_model.dart';
 import 'package:artxprochatapp/AppModule/GroupChatModule/ViewModel/group_chat_view_model.dart';
 import 'package:artxprochatapp/AppModule/HomeModule/View/component/single_user_chat_tile.dart';
 import 'package:artxprochatapp/Utils/SizeConfig/size_config.dart';
@@ -15,12 +16,14 @@ import '../../HomeModule/ViewModel/home_view_model.dart';
 import '../../HomeModule/View/component/add_new_group_dailog.dart';
 import '../../HomeModule/View/component/input_chat_tile.dart';
 import '../Model/group_chat_model.dart';
+import '../Model/groups_model.dart';
 import 'mobile_group_chat_view.dart';
 
 class GroupChatView extends StatelessWidget {
   GroupChatView({Key? key}) : super(key: key);
-  int groupIndex =Get.arguments[0];
-  String groupName = Platform.isWindows ? Get.arguments[1] : '';
+  int groupIndex = Get.arguments[0];
+  GroupsModel groupModel = Get.arguments[1];
+  UserModel currentUser = Get.arguments[2];
 
   final homeVM = Get.find<HomeViewModel>();
   final groupVM = Get.find<GroupChatViewModel>();
@@ -41,7 +44,7 @@ class GroupChatView extends StatelessWidget {
               ),
               automaticallyImplyLeading: false,
               backgroundColor: Color(0xff3079E2),
-              title: Text(groupName),
+              title: Text(groupModel.groupName!),
               centerTitle: true,
             )
           : null,
@@ -77,21 +80,21 @@ class GroupChatView extends StatelessWidget {
                         width: SizeConfig.heightMultiplier * 20,
                         height: SizeConfig.heightMultiplier * 5,
                         child: Obx(
-                          () => homeVM.groupChatList[groupIndex].user!.isEmpty
+                          () => groupVM.groupList[groupIndex].userModel!.isEmpty
                               ? const SizedBox.shrink()
                               : Stack(
                                   alignment: Alignment.centerRight,
                                   children: List.generate(
-                                    homeVM.groupChatList[groupIndex].user!
+                                    groupVM.groupList[groupIndex].userModel!
                                                 .length <
                                             2
-                                        ? homeVM.groupChatList[groupIndex].user!
-                                            .length
-                                        : homeVM.groupChatList[groupIndex].user!
-                                                    .length <
+                                        ? groupVM.groupList[groupIndex]
+                                            .userModel!.length
+                                        : groupVM.groupList[groupIndex]
+                                                    .userModel!.length <
                                                 3
-                                            ? homeVM.groupChatList[groupIndex]
-                                                .user!.length
+                                            ? groupVM.groupList[groupIndex]
+                                                .userModel!.length
                                             : 4,
                                     (index) => Positioned(
                                         left: index * 30,
@@ -109,17 +112,17 @@ class GroupChatView extends StatelessWidget {
                                                   ? null
                                                   : DecorationImage(
                                                       image: NetworkImage(
-                                                        homeVM
-                                                            .groupChatList[
+                                                        groupVM
+                                                            .groupList[
                                                                 groupIndex]
-                                                            .user![index]
-                                                            .image!,
+                                                            .userModel![index]
+                                                            .userImage!,
                                                       ),
                                                       fit: BoxFit.cover)),
                                           child: index == 3
                                               ? Center(
                                                   child: Text(
-                                                    '+${homeVM.groupChatList[groupIndex].user!.length - 3} more',
+                                                    '+${groupVM.groupList[groupIndex].userModel!.length - 3} more',
                                                     style: GoogleFonts.acme(
                                                         color: Colors.black,
                                                         fontSize: 12),
@@ -137,8 +140,8 @@ class GroupChatView extends StatelessWidget {
                             context: context,
                             builder: (context) {
                               return Dialog(
-                                child: addMemberView(homeVM, context,
-                                    homeVM.groupChatList.length),
+                                child: addMemberView(
+                                    homeVM, context, groupVM.groupList.length),
                               );
                             },
                           );
@@ -271,8 +274,10 @@ class GroupChatView extends StatelessWidget {
               ],
             )
           : MobileGroupView(
+            currentUser: currentUser,
+            groupIndex: groupIndex,
+              groupsModel: groupModel.obs,
               groupVM: groupVM,
-              groupIndex: groupIndex,
             ),
     );
   }

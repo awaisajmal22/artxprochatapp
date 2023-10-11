@@ -10,12 +10,13 @@ toast(
     {required String title,
     Color backgroundColor = Colors.blue,
     Color textColor = Colors.white,
+    ToastGravity gravity =ToastGravity.TOP,
     double fontSize = 16}) {
   return Fluttertoast.showToast(
     msg: title,
     backgroundColor: backgroundColor,
     toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.TOP,
+    gravity: gravity,
     textColor: textColor,
     fontSize: fontSize,
   );

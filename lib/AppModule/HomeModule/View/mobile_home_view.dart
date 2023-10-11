@@ -2,6 +2,7 @@ import 'package:artxprochatapp/AppModule/HomeModule/View/component/mobile_chat_n
 import 'package:artxprochatapp/RoutesAndBindings/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 
@@ -11,6 +12,7 @@ import '../../GroupChatModule/ViewModel/group_chat_view_model.dart';
 import '../../SingleChatModule/ViewModel/single_chat_view_model.dart';
 import '../ViewModel/home_view_model.dart';
 import 'component/mobile_groups_list.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class MobileHomeView extends StatelessWidget {
   const MobileHomeView({
@@ -95,7 +97,9 @@ class MobileHomeView extends StatelessWidget {
                     SizedBox(
                       height: SizeConfig.heightMultiplier * 1.5,
                     ),
-                    ChatGroupMobile(groupVM: groupVM),
+                    ChatGroupMobile(
+                      groupVM: groupVM,
+                    ),
                   ],
                 ),
                 SizedBox(
@@ -106,153 +110,193 @@ class MobileHomeView extends StatelessWidget {
                 ),
                 Expanded(
                   child: Obx(
-                    () => ListView.builder(
-                      itemCount: singleChatVM.usersList.length,
-                      itemBuilder: (context, index) {
-                        final unreadedMessage = singleChatVM
-                            .usersList[index].message!
-                            .where((message) => message.isReaded == false)
-                            .length;
-                        return singleChatVM.usersList[index].message!.isEmpty
-                            ? SizedBox.shrink()
-                            : Obx(
-                                () => Column(
-                                  children: [
-                                    ListTile(
-                                      onTap: () {
-                                        Get.toNamed(AppRoutes.singleChatView,
-                                            arguments:
-                                                singleChatVM.usersList[index]);
-                                      },
-                                      leading: SizedBox(
-                                        height: SizeConfig.heightMultiplier * 8,
-                                        width: SizeConfig.widthMultiplier * 14,
-                                        child: Stack(
-                                          alignment: Alignment.center,
-                                          children: [
-                                            Positioned(
-                                              right: 0,
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(50),
-                                                child: Image.network(
-                                                  singleChatVM.usersList[index]
-                                                      .userImage!,
-                                                  fit: BoxFit.cover,
-                                                  height: SizeConfig
-                                                          .heightMultiplier *
-                                                      6,
-                                                  width: SizeConfig
-                                                          .widthMultiplier *
-                                                      12,
-                                                ),
-                                              ),
-                                            ),
-                                            singleChatVM.usersList[index]
-                                                    .message!.isEmpty
-                                                ? SizedBox.shrink()
-                                                : Positioned(
-                                                    left: 0,
-                                                    top: 0,
-                                                    child: Container(
-                                                      height: SizeConfig
-                                                              .heightMultiplier *
-                                                          4,
-                                                      width: SizeConfig
-                                                              .widthMultiplier *
-                                                          8,
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                              color:
-                                                                  Colors.black,
-                                                              shape: BoxShape
-                                                                  .circle),
-                                                      child: Center(
-                                                        child: Text(
-                                                          "+${unreadedMessage.toString()}",
-                                                          style: Theme.of(
-                                                                  context)
-                                                              .textTheme
-                                                              .bodySmall!
-                                                              .copyWith(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize:
-                                                                      SizeConfig
-                                                                              .textMultiplier *
-                                                                          1.7),
-                                                        ),
+                    () => singleChatVM.userChatList.length <= 1
+                        ? Center(
+                            child: Text(
+                              'No Messages Yet..',
+                              style: GoogleFonts.acme()
+                                  .copyWith(color: Colors.black),
+                            ),
+                          )
+                        : ListView.builder(
+                            itemCount: singleChatVM.userChatList.length,
+                            itemBuilder: (context, index) {
+                              return singleChatVM.userChatList[index].uid ==
+                                          singleChatVM.currentUser!.uid ||
+                                      singleChatVM
+                                              .userChatList[index].isMessage ==
+                                          false
+                                  ? const SizedBox.shrink()
+                                  : Obx(
+                                      () => Column(
+                                        children: [
+                                          ListTile(
+                                            onTap: () {
+                                              singleChatVM.getUserByID(
+                                                  uid: singleChatVM
+                                                      .userChatList[index]
+                                                      .uid!);
+                                              singleChatVM.getMessages(
+                                                  receiverUid: singleChatVM
+                                                      .userChatList[index]
+                                                      .uid!);
+                                              Get.toNamed(
+                                                AppRoutes.singleChatView,
+                                              );
+                                            },
+                                            leading: SizedBox(
+                                              height:
+                                                  SizeConfig.heightMultiplier *
+                                                      8,
+                                              width:
+                                                  SizeConfig.widthMultiplier *
+                                                      14,
+                                              child: Stack(
+                                                alignment: Alignment.center,
+                                                children: [
+                                                  Positioned(
+                                                    right: 0,
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              50),
+                                                      child: Image.network(
+                                                        singleChatVM
+                                                            .userChatList[index]
+                                                            .image!,
+                                                        fit: BoxFit.cover,
+                                                        height: SizeConfig
+                                                                .heightMultiplier *
+                                                            6,
+                                                        width: SizeConfig
+                                                                .widthMultiplier *
+                                                            12,
                                                       ),
                                                     ),
-                                                  )
-                                          ],
-                                        ),
-                                      ),
-                                      title: Text(
-                                        singleChatVM.usersList[index].userName!,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall!
-                                            .copyWith(
-                                                color: Colors.black,
-                                                fontSize:
-                                                    SizeConfig.textMultiplier *
-                                                        2.0),
-                                      ),
-                                      subtitle: singleChatVM
-                                              .usersList[index].message!.isEmpty
-                                          ? const SizedBox.shrink()
-                                          : Text(
-                                              singleChatVM.usersList[index]
-                                                  .message![0].msg!,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                  // singleChatVM.userChatList[index]
+                                                  //         .message!.isEmpty
+                                                  //     ? SizedBox.shrink()
+                                                  //     : Positioned(
+                                                  //         left: 0,
+                                                  //         top: 0,
+                                                  //         child: Container(
+                                                  //           height: SizeConfig
+                                                  //                   .heightMultiplier *
+                                                  //               4,
+                                                  //           width: SizeConfig
+                                                  //                   .widthMultiplier *
+                                                  //               8,
+                                                  //           decoration:
+                                                  //               const BoxDecoration(
+                                                  //                   color:
+                                                  //                       Colors.black,
+                                                  //                   shape: BoxShape
+                                                  //                       .circle),
+                                                  //           child: Center(
+                                                  //             child: Text(
+                                                  //               "+${unreadedMessage.toString()}",
+                                                  //               style: Theme.of(
+                                                  //                       context)
+                                                  //                   .textTheme
+                                                  //                   .bodySmall!
+                                                  //                   .copyWith(
+                                                  //                       color: Colors
+                                                  //                           .white,
+                                                  //                       fontSize:
+                                                  //                           SizeConfig
+                                                  //                                   .textMultiplier *
+                                                  //                               1.7),
+                                                  //             ),
+                                                  //           ),
+                                                  //         ),
+                                                  //       )
+                                                ],
+                                              ),
+                                            ),
+                                            title: Text(
+                                              singleChatVM
+                                                  .userChatList[index].name!,
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodySmall!
                                                   .copyWith(
-                                                      fontStyle:
-                                                          FontStyle.normal,
-                                                      fontWeight: singleChatVM
-                                                                  .usersList[
-                                                                      index]
-                                                                  .message![0]
-                                                                  .isReaded ==
-                                                              true
-                                                          ? FontWeight.w900
-                                                          : FontWeight.w300,
                                                       color: Colors.black,
                                                       fontSize: SizeConfig
                                                               .textMultiplier *
-                                                          1.8),
+                                                          2.0),
                                             ),
-                                      trailing: Text(
-                                        singleChatVM.checkDate(singleChatVM
-                                            .usersList[index]
-                                            .message![0]
-                                            .dateTime!),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall!
-                                            .copyWith(
-                                                fontStyle: FontStyle.normal,
-                                                fontWeight: FontWeight.w300,
-                                                color: Colors.black,
-                                                fontSize:
-                                                    SizeConfig.textMultiplier *
-                                                        1.8),
+                                            // subtitle: singleChatVM
+                                            //         .userChatList[index].message!.isEmpty
+                                            //     ? const SizedBox.shrink()
+                                            //     : Text(
+                                            //         singleChatVM.userChatList[index]
+                                            //             .message![0].msg!,
+                                            //         maxLines: 1,
+                                            //         overflow: TextOverflow.ellipsis,
+                                            //         style: Theme.of(context)
+                                            //             .textTheme
+                                            //             .bodySmall!
+                                            //             .copyWith(
+                                            //                 fontStyle:
+                                            //                     FontStyle.normal,
+                                            //                 fontWeight: singleChatVM
+                                            //                             .userChatList[
+                                            //                                 index]
+                                            //                             .message![0]
+                                            //                             .isReaded ==
+                                            //                         true
+                                            //                     ? FontWeight.w900
+                                            //                     : FontWeight.w300,
+                                            //                 color: Colors.black,
+                                            //                 fontSize: SizeConfig
+                                            //                         .textMultiplier *
+                                            //                     1.8),
+                                            //       ),
+                                            trailing: singleChatVM
+                                                    .userChatList.isNotEmpty
+                                                ? Text(
+                                                    singleChatVM
+                                                                .userChatList[
+                                                                    index]
+                                                                .lastActive ==
+                                                            null
+                                                        ? ''
+                                                        : singleChatVM
+                                                                    .userChatList[
+                                                                        index]
+                                                                    .isOnline ==
+                                                                true
+                                                            ? "Active"
+                                                            : "${timeago.format(singleChatVM.userChatList[index].lastActive!.toDate())}",
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall!
+                                                        .copyWith(
+                                                            fontStyle: FontStyle
+                                                                .normal,
+                                                            fontWeight:
+                                                                FontWeight.w300,
+                                                            color: Colors.black,
+                                                            fontSize: SizeConfig
+                                                                    .textMultiplier *
+                                                                1.8),
+                                                  )
+                                                : const SizedBox.shrink(),
+                                          ),
+                                          SizedBox(
+                                            height:
+                                                SizeConfig.heightMultiplier *
+                                                    0.5,
+                                          )
+                                        ],
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: SizeConfig.heightMultiplier * 0.5,
-                                    )
-                                  ],
-                                ),
-                              );
-                      },
-                    ),
+                                    );
+                            },
+                          ),
                   ),
                 ),
               ],
@@ -292,7 +336,7 @@ class MobileHomePageSearchView extends StatelessWidget {
             GestureDetector(
               onTap: () {
                 showTextNewUserDialog(
-                  homeVM: homeVM,
+                    homeVM: homeVM,
                     context: context,
                     controller: singleChatVM.searchController,
                     singleChatVM: singleChatVM);

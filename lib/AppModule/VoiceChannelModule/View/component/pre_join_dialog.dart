@@ -1,14 +1,19 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:artxprochatapp/AppModule/VoiceChannelModule/View/component/video_call.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import '../../Model/channel_name_model.dart';
+import '../../ViewModel/voice_channel_view_model.dart';
 
 class PreJoiningDialog extends StatefulWidget {
   const PreJoiningDialog({
-   
     required this.token,
     required this.channelName,
   });
@@ -24,7 +29,7 @@ class _PreJoiningDialogState extends State<PreJoiningDialog> {
   bool _isMicEnabled = false;
   bool _isCameraEnabled = false;
   bool _isJoining = false;
-
+  
   Future<void> _getMicPermissions() async {
     if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
       final micPermission = await Permission.microphone.request();

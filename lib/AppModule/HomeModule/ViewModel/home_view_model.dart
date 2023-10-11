@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:artxprochatapp/AppModule/AuthModule/SignUp/Model/user_model.dart';
+import 'package:artxprochatapp/AppModule/GroupChatModule/ViewModel/group_chat_view_model.dart';
 import 'package:artxprochatapp/AppModule/HomeModule/Model/group_chat_model.dart';
 import 'package:artxprochatapp/RoutesAndBindings/app_routes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,6 +19,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../Utils/SizeConfig/size_config.dart';
+import '../../GroupChatModule/Model/groups_model.dart';
 import '../Model/chat_model.dart';
 import 'package:path/path.dart' as path;
 import 'package:record/record.dart';
@@ -174,18 +176,6 @@ class HomeViewModel extends GetxController {
 
   @override
   void onInit() {
-    // TODO: implement
-
-    // silverAppBarScrollController
-    //   .addListener(() {
-    //     if (silverAppBarScrollController.offset >
-    //         (SizeConfig.heightMultiplier * 43.1 - kToolbarHeight)) {
-    //       isExpanded.value = true;
-    //     } else {
-    //       isExpanded.value = false;
-    //     }
-    // isAppBarPinned.value = _isAppBarExpanded;
-    // });
     getCurrentUserData();
     audioPlayer;
 
@@ -338,14 +328,6 @@ class HomeViewModel extends GetxController {
         userData.value = model;
       }
     });
-    // if (user != null) {
-    //   final data = await FirebaseFirestore.instance
-    //       .collection('users')
-    //       .doc(user!.uid)
-    //       .get();
-
-    //   final model = UserModel.fromJson(data.data()!);
-    //   userData.value = model;
   }
 
   final auth = FirebaseAuth.instance;
@@ -356,15 +338,18 @@ class HomeViewModel extends GetxController {
     if (current == null) {
       return;
     }
+    final groupVM = Get.put(GroupChatViewModel());
+   
     final userRef = databaseReference.doc(current);
     userRef.update({
       "isOnline": false,
-      "lastActive": FieldValue.serverTimestamp()
+      "lastActive": FieldValue.serverTimestamp(),
+      "fmcToken": '',
     }).then((value) async {
-       final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('email', '');
-        await prefs.setString('password', '');
-        await prefs.setString('uid', '');
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('email', '');
+      await prefs.setString('password', '');
+      await prefs.setString('uid', '');
       await auth
           .signOut()
           .whenComplete(() => Get.offAllNamed(AppRoutes.loginView));

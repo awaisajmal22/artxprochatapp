@@ -8,4 +8,5 @@ abstract class AppRoutes {
   static const voicChannelView = '/voiceChannelView';
   static const groupChatSettingView = '/groupCHatSettingView';
   static const singleChatView = '/singleChatView';
+  static const groupProfileView = '/groupProfileView';
 }

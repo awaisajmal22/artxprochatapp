@@ -4,17 +4,19 @@ import 'package:get/get.dart';
 import '../../../../RoutesAndBindings/app_routes.dart';
 import '../../../../Utils/SizeConfig/size_config.dart';
 import '../../Model/group_chat_model.dart';
+import '../../Model/groups_model.dart';
 import '../../ViewModel/group_chat_view_model.dart';
 
 class MobileGroupPeopleListView extends StatelessWidget {
+  Rx<GroupsModel> groupModel;
   int groupIndex;
   MobileGroupPeopleListView({
     Key? key,
+    required this.groupModel,
     required this.groupIndex,
     // required this.controller,
   }) : super(key: key);
 
- 
   final groupVM = Get.put(GroupChatViewModel());
 
   @override
@@ -23,7 +25,6 @@ class MobileGroupPeopleListView extends StatelessWidget {
         height: SizeConfig.heightMultiplier * 7.5,
         width: SizeConfig.widthMultiplier * 100,
         child: ListView(
-        
           shrinkWrap: true,
           scrollDirection: Axis.horizontal,
           children: [
@@ -36,8 +37,10 @@ class MobileGroupPeopleListView extends StatelessWidget {
                 alignment: Alignment.topCenter,
                 child: GestureDetector(
                   onTap: () {
-                    Get.toNamed(AppRoutes.groupChatSettingView,
-                        arguments: [groupVM.groupList[groupIndex], groupIndex]);
+                    Get.toNamed(AppRoutes.groupChatSettingView, arguments: [
+                      groupModel.value,
+                      groupVM.groupMembersList
+                    ]);
                   },
                   child: Container(
                     height: SizeConfig.heightMultiplier * 6,
@@ -64,13 +67,13 @@ class MobileGroupPeopleListView extends StatelessWidget {
               width: SizeConfig.widthMultiplier * 3,
             ),
             Obx(
-              () => groupVM.groupList.isEmpty
+              () => groupVM.groupMembersList.isEmpty
                   ? SizedBox.shrink()
                   : Row(
-                      children: List.generate(
-                          groupVM.groupList[groupIndex].userModel!.length,
+                      children: List.generate(groupVM.groupMembersList.length,
                           (index) {
                         bool isEven = index % 2 == 0;
+                        final data = groupVM.groupMembersList[index];
                         return Row(
                           children: [
                             SizedBox(
@@ -80,16 +83,15 @@ class MobileGroupPeopleListView extends StatelessWidget {
                                     ? Alignment.bottomCenter
                                     : Alignment.topCenter,
                                 child: GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                    Get.toNamed(AppRoutes.groupProfileView,
+                                        arguments: data.obs);
+                                  },
                                   child: Container(
                                     height: SizeConfig.heightMultiplier * 6,
                                     width: SizeConfig.widthMultiplier * 12,
                                     decoration: BoxDecoration(
-                                        border: groupVM
-                                                    .groupList[groupIndex]
-                                                    .userModel![index]
-                                                    .groupCreatedBy ==
-                                                true
+                                        border: data.isAdmin == true
                                             ? Border.all(
                                                 color: Colors.blue,
                                                 width: 2,
@@ -99,8 +101,7 @@ class MobileGroupPeopleListView extends StatelessWidget {
                                         color: Colors.black,
                                         image: DecorationImage(
                                           image: NetworkImage(
-                                            groupVM.groupList[groupIndex]
-                                                .userModel![index].userImage!,
+                                            data.image!,
                                           ),
                                           fit: BoxFit.cover,
                                         ),
@@ -125,7 +126,7 @@ class MobileGroupPeopleListView extends StatelessWidget {
                         );
                       }, growable: true),
                     ),
-            ),
+            )
           ],
         ));
   }

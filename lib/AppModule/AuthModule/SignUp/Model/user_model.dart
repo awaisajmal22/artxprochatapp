@@ -9,8 +9,10 @@ class UserModel {
   String? email;
   String? password;
   String? image;
+  bool? isMessage;
   Timestamp? lastActive;
   bool? isOnline;
+  String? fmcToken;
 
   UserModel({
     this.email,
@@ -20,17 +22,20 @@ class UserModel {
     this.image,
     this.lastActive,
     this.isOnline,
+    this.isMessage,
+    this.fmcToken,
   });
   factory UserModel.fromJson(Map<String, dynamic> map) {
     return UserModel(
-      uid: map['uid'] ?? '',
-      email: map['email'] ?? '',
-      name: map['name'] ?? '',
-      password: map['password'] ?? '',
-      image: map['image'] ?? '',
-      isOnline: map['isOnline'] ?? false,
-      lastActive: map['lastActive'] 
-    );
+        uid: map['uid'] ?? '',
+        email: map['email'] ?? '',
+        name: map['name'] ?? '',
+        password: map['password'] ?? '',
+        image: map['image'] ?? '',
+        isMessage: map['isMessage'] ?? false,
+        isOnline: map['isOnline'] ?? false,
+        fmcToken: map['fmcToken'],
+        lastActive: map['lastActive']);
   }
   Map<String, dynamic> toMap() {
     return {
@@ -40,7 +45,23 @@ class UserModel {
       'password': password,
       'image': image,
       'isOnline': isOnline,
+      'fmcToken': fmcToken,
+      'isMessage': isMessage,
       'lastActive': lastActive,
+    };
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "uid": uid,
+      "email": email,
+      "name": name,
+      "password": password,
+      "image": image,
+      "isOnline": isOnline,
+      "isMessage": isMessage,
+      'fmcToken': fmcToken,
+      "lastActive": lastActive,
     };
   }
 }

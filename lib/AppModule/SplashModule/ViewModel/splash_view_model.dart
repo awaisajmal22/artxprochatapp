@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:artxprochatapp/AppModule/Services/single_chat_notification_firebase_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class SplashViewModel extends GetxController {
   void onInit() {
     timer = Timer(const Duration(seconds: 2), () {
       checkUser();
+      
     });
   }
 
@@ -44,8 +46,9 @@ class SplashViewModel extends GetxController {
           toast(
               title: e.toString().substring(index + 1),
               backgroundColor: Colors.black);
+          Get.offAllNamed(AppRoutes.loginView);
         });
-      }else{
+      } else {
         Get.offAllNamed(AppRoutes.loginView);
       }
     } else {

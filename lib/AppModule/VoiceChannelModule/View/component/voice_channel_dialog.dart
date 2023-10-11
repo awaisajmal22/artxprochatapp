@@ -63,7 +63,7 @@ voiceChannelDialog({
                               context: context,
                               title: 'Please Enter the Channel Name..');
                         }
-                      } else if (voiceVM.channelList
+                      } else if (voiceVM.channelsList
                           .contains(voiceVM.channelController.text.trim())) {
                         if (Platform.isAndroid) {
                           toast(
@@ -78,7 +78,7 @@ voiceChannelDialog({
                       } else {
                         // voiceVM
                         //     .joinChannel(voiceVM.channelController.text.trim());
-                        voiceVM.channelList
+                        voiceVM.channelsList
                             .add(ChannelNameModel(channelName: voiceVM.channelController.text));
                         Get.back();
                         Get.toNamed(
@@ -87,7 +87,7 @@ voiceChannelDialog({
                           voiceVM.channelController.clear();
                         });
 
-                        print(voiceVM.channelList.length);
+                        print(voiceVM.channelsList.length);
                       }
                     });
                   },

@@ -1,26 +1,52 @@
 import 'dart:io';
 
+import 'package:artxprochatapp/AppModule/SingleChatModule/Model/users_model.dart';
+import 'package:artxprochatapp/AppModule/SingleChatModule/ViewModel/single_chat_view_model.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 
+import 'AppModule/AuthModule/SignUp/Model/user_model.dart';
 import 'RoutesAndBindings/app_pages.dart';
 import 'RoutesAndBindings/app_routes.dart';
 import 'Utils/SizeConfig/size_config.dart';
 import 'Utils/Theme/app_theme.dart';
 import 'firebase_options.dart';
 
-void main() async {
+void getNotification() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  messaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: true,
+    provisional: true,
+    sound: true,
+  );
+ await FirebaseMessaging.onMessage.listen((event) {
+    Get.snackbar(event.notification!.title!, event.notification!.body!);
+  });
+}
+
+Future<void> main() async {
   if (Platform.isAndroid) {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    getNotification();
+
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    print(fcmToken);
   }
   runApp(const MyApp());
 }
@@ -59,14 +85,23 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         prefpassword != null) {
       if (prefemail != '' && prefpassword != '') {
         final userRef = databaseReference.doc(_auth.currentUser!.uid);
-        userRef.update(
-            {"isOnline": true, "lastActive": FieldValue.serverTimestamp()});
+        final fcmToken = await FirebaseMessaging.instance.getToken();
+        userRef.update({
+          "isOnline": true,
+          "lastActive": FieldValue.serverTimestamp(),
+          'fmcToken': fcmToken
+        });
       }
     } else {
-      if(_auth.currentUser?.uid != null){
-      final userRef = databaseReference.doc(_auth.currentUser!.uid);
-      userRef.update(
-          {"isOnline": false, "lastActive": FieldValue.serverTimestamp()});}
+      if (_auth.currentUser?.uid != null) {
+        final userRef = databaseReference.doc(_auth.currentUser!.uid);
+        // FirebaseMessaging.onMessage.listen((event) async {
+        //   await onBackgroundHandler();
+        // });
+        final fcmToken = await FirebaseMessaging.instance.getToken();
+        userRef.update(
+            {"isOnline": false, "lastActive": FieldValue.serverTimestamp()});
+      }
     }
     // TODO: implement didChangeAppLifecycleState
     super.didChangeAppLifecycleState(state);
