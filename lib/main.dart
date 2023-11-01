@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:artxprochatapp/AppModule/SingleChatModule/Model/users_model.dart';
-import 'package:artxprochatapp/AppModule/SingleChatModule/ViewModel/single_chat_view_model.dart';
+// import 'package:artxprochatapp/AppModule/SingleChatModule/Model/users_model.dart';
+// import 'package:artxprochatapp/AppModule/SingleChatModule/ViewModel/single_chat_view_model.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,11 +15,12 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'AppModule/AuthModule/SignUp/Model/user_model.dart';
+// import 'AppModule/AuthModule/SignUp/Model/user_model.dart';
 import 'RoutesAndBindings/app_pages.dart';
 import 'RoutesAndBindings/app_routes.dart';
 import 'Utils/SizeConfig/size_config.dart';
 import 'Utils/Theme/app_theme.dart';
+import 'Utils/Theme/theme.dart';
 import 'firebase_options.dart';
 
 void getNotification() async {
@@ -32,7 +33,7 @@ void getNotification() async {
     provisional: true,
     sound: true,
   );
- await FirebaseMessaging.onMessage.listen((event) {
+  await FirebaseMessaging.onMessage.listen((event) {
     Get.snackbar(event.notification!.title!, event.notification!.body!);
   });
 }

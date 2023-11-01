@@ -9,4 +9,8 @@ abstract class AppRoutes {
   static const groupChatSettingView = '/groupCHatSettingView';
   static const singleChatView = '/singleChatView';
   static const groupProfileView = '/groupProfileView';
+  static const directoryView = '/directoryView';
+  static const allUsersView = '/allUsersView';
+  static const createGroupView = '/createGroupView';
+  static const addGroupDetailView = '/addGroupDetailView';
 }

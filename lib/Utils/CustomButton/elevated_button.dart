@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:artxprochatapp/Utils/SizeConfig/size_config.dart';
 import 'package:flutter/material.dart';

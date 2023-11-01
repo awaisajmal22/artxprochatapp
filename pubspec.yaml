@@ -74,6 +74,13 @@ dependencies:
   flutter_svg: ^2.0.5
   flutter_launcher_icons: ^0.13.1
   awesome_notifications: ^0.8.2
+  url_launcher: ^6.1.11
+  audioplayers: ^4.1.0
+  flutter_audio_waveforms: ^1.2.1+8
+  dropdown_button2: ^2.1.4
+  emoji_picker_flutter: ^1.6.3
+  custom_clippers: ^2.0.0
+ 
 
   
 

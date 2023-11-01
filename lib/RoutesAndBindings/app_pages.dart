@@ -1,23 +1,23 @@
-import 'package:artxprochatapp/AppModule/AuthModule/Login/View/login_view.dart';
-import 'package:artxprochatapp/AppModule/HomeModule/View/component/chat_list_view.dart';
-import 'package:artxprochatapp/AppModule/ProfileModule/ViewModel/profile_view_model.dart';
+import 'package:artxprochatapp/App/AllUsers/View/all_users_view.dart';
+import 'package:artxprochatapp/App/SingleChat/View/single_chat_view.dart';
 import 'package:get/get.dart';
 
-import '../AppModule/AuthModule/Login/ViewModel/login_view_model.dart';
-import '../AppModule/AuthModule/SignUp/View/signup_view.dart';
-import '../AppModule/AuthModule/SignUp/ViewModel/signup_view_model.dart';
-import '../AppModule/GroupChatModule/View/group_chat_view.dart';
-import '../AppModule/GroupChatModule/View/group_chat_setting_view.dart';
-import '../AppModule/GroupChatModule/ViewModel/group_chat_view_model.dart';
-import '../AppModule/HomeModule/View/home_view.dart';
-import '../AppModule/HomeModule/ViewModel/home_view_model.dart';
-import '../AppModule/ProfileModule/View/profile_view.dart';
-import '../AppModule/SingleChatModule/View/single_chat_view.dart';
-import '../AppModule/SingleChatModule/ViewModel/single_chat_view_model.dart';
-import '../AppModule/SplashModule/View/splash_view.dart';
-import '../AppModule/SplashModule/ViewModel/splash_view_model.dart';
-import '../AppModule/VoiceChannelModule/View/voice_channel_view.dart';
-import '../AppModule/VoiceChannelModule/ViewModel/voice_channel_view_model.dart';
+import '../App/AllUsers/ViewModel/all_users_view_model.dart';
+import '../App/Auth/Login/View/login_view.dart';
+import '../App/Auth/Login/ViewModel/login_view_model.dart';
+import '../App/Auth/Signup/View/signup_view.dart';
+import '../App/Auth/Signup/ViewModel/signup_view_model.dart';
+import '../App/CreatGroup/View/add_group_detail_view.dart';
+import '../App/CreatGroup/View/create_group_view.dart';
+import '../App/CreatGroup/ViewModel/create_group_view_model.dart';
+import '../App/Home/View/home_view.dart';
+import '../App/Home/ViewModel/home_view_model.dart';
+import '../App/SingleChat/ViewModel/single_chat_view_model.dart';
+import '../App/Splash/View/splash_view.dart';
+import '../App/Splash/ViewModel/splash_view_model.dart';
+// import '../AppModule/GroupChatModule/View/group_chat_view.dart';
+// import '../AppModule/GroupChatModule/ViewModel/group_chat_view_model.dart';
+// import '../AppModule/ProfileModule/View/profile_view.dart';
 import 'app_routes.dart';
 
 class AppPages {
@@ -50,53 +50,84 @@ class AppPages {
         binding: BindingsBuilder(() {
           Get.lazyPut(() => HomeViewModel());
 
-          Get.lazyPut(() => LoginViewModel());
+          // Get.lazyPut(() => LoginViewModel());
           Get.lazyPut(() => SingleChatViewModel());
-          Get.lazyPut(() => GroupChatViewModel());
+          // Get.lazyPut(() => GroupChatViewModel());
         })),
-    GetPage(
-        name: AppRoutes.groupView,
-        transition: Transition.fade,
-        page: () => GroupChatView(),
-        binding: BindingsBuilder(() {
-          Get.lazyPut(() => HomeViewModel());
-          Get.lazyPut(() => GroupChatViewModel());
-        })),
-    GetPage(
-        name: AppRoutes.profileView,
-        transition: Transition.fade,
-        page: () => ProfileView(),
-        binding: BindingsBuilder(() {
-          Get.lazyPut(() => ProfileViewModel());
-        })),
-    GetPage(
-        name: AppRoutes.voicChannelView,
-        transition: Transition.fade,
-        page: () => VoiceChannelView(),
-        binding: BindingsBuilder(() {
-          Get.lazyPut(() => VoiceChannelViewModel());
-        })),
-    GetPage(
-        name: AppRoutes.groupChatSettingView,
-        transition: Transition.fade,
-        page: () => GroupChatSettingView(),
-        binding: BindingsBuilder(() {
-          Get.lazyPut(() => GroupChatViewModel());
-        })),
+    // GetPage(
+    //     name: AppRoutes.groupView,
+    //     transition: Transition.fade,
+    //     page: () => GroupChatView(),
+    //     binding: BindingsBuilder(() {
+    //       Get.lazyPut(() => HomeViewModel());
+    //       Get.lazyPut(() => GroupChatViewModel());
+    //     })),
+    // GetPage(
+    //     name: AppRoutes.profileView,
+    //     transition: Transition.fade,
+    //     page: () => ProfileView(),
+    //     binding: BindingsBuilder(() {
+    //       Get.lazyPut(() => ProfileViewModel());
+    //     })),
+    // GetPage(
+    //     name: AppRoutes.voicChannelView,
+    //     transition: Transition.fade,
+    //     page: () => VoiceChannelView(),
+    //     binding: BindingsBuilder(() {
+    //       Get.lazyPut(() => VoiceChannelViewModel());
+    //     })),
+    // GetPage(
+    //     name: AppRoutes.groupChatSettingView,
+    //     transition: Transition.fade,
+    //     page: () => GroupChatSettingView(),
+    //     binding: BindingsBuilder(() {
+    //       Get.lazyPut(() => GroupChatViewModel());
+    //       Get.lazyPut(() => DirectoryViewModel());
+    //     })),
     GetPage(
         name: AppRoutes.singleChatView,
         transition: Transition.fade,
         page: () => SingleChatView(),
         binding: BindingsBuilder(() {
-          Get.lazyPut(() => GroupChatViewModel());
           Get.lazyPut(() => SingleChatViewModel());
+          // Get.lazyPut(() => GroupChatViewModel());
+          // Get.lazyPut(() => DirectoryViewModel());
         })),
-         GetPage(
-        name: AppRoutes.groupProfileView,
+    // GetPage(
+    //     name: AppRoutes.groupProfileView,
+    //     transition: Transition.fade,
+    //     page: () => GroupProfileView(),
+    //     binding: BindingsBuilder(() {
+    //       Get.lazyPut(() => ProfileViewModel());
+    //     })),
+    // GetPage(
+    //     name: AppRoutes.directoryView,
+    //     transition: Transition.fade,
+    //     page: () => DirectoryView(),
+    //     binding: BindingsBuilder(() {
+    //       Get.lazyPut(() => DirectoryViewModel());
+    //       Get.lazyPut(() => GroupChatViewModel());
+    //     })),
+    GetPage(
+        name: AppRoutes.allUsersView,
         transition: Transition.fade,
-        page: () => GroupProfileView(),
+        page: () => AllUsersView(),
         binding: BindingsBuilder(() {
-          Get.lazyPut(() => ProfileViewModel());
+          Get.lazyPut(() => AllUsersViewModel());
+        })),
+    GetPage(
+        name: AppRoutes.createGroupView,
+        transition: Transition.fade,
+        page: () => CreateGroupView(),
+        binding: BindingsBuilder(() {
+          Get.lazyPut(() => CreateGroupViewModel());
+        })),
+    GetPage(
+        name: AppRoutes.addGroupDetailView,
+        transition: Transition.fade,
+        page: () => AddGroupDetailView(),
+        binding: BindingsBuilder(() {
+          Get.lazyPut(() => CreateGroupViewModel());
         })),
   ];
 }

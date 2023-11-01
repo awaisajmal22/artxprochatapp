@@ -6,7 +6,7 @@ enum ThemeType {
   darkTheme,
 }
 
-final appTheme = ThemeData(
+final theme = ThemeData(
   scaffoldBackgroundColor: Colors.white,
   brightness: Brightness.light,
   shadowColor: Colors.black38,
