@@ -8,7 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-
+import 'dart:math' as math;
 class SingleChatViewModel extends GetxController {
   TextEditingController messageController = TextEditingController();
   TextEditingController emojiController = TextEditingController();
@@ -16,6 +16,8 @@ class SingleChatViewModel extends GetxController {
     PopupMenuModel(icon: Icons.person, key: 1, title: 'View Profile'),
     PopupMenuModel(icon: Ionicons.link, key: 2, title: 'Media, Links & Docs'),
   ];
+
+  final String localUserID = math.Random().nextInt(10000).toString();
   RxBool isEmojiShowing = false.obs;
   RxBool isShowCamera = true.obs;
   onBackspacePressed() {

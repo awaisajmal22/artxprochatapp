@@ -62,9 +62,12 @@ class GroupChatView extends StatelessWidget {
                                     fontWeight: FontWeight.w500,
                                   ),
                         ),
-                        Text(
-                          "Members ${group.members!.length}",
-                          style: TextStyle(color: Colors.white),
+                        Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text(
+                            "${group.members!.length} Members",
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       ],
                     ),
@@ -122,7 +125,6 @@ class GroupChatView extends StatelessWidget {
                       },
                     ),
             )),
-
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -191,7 +193,6 @@ class GroupChatView extends StatelessWidget {
             SizedBox(
               height: SizeConfig.widthMultiplier * 2,
             ),
-           
           ],
         ),
       ),
