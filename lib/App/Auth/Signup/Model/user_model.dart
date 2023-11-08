@@ -10,11 +10,10 @@ class UserModel {
   String? password;
   String? image;
   bool? isMessage;
-  Timestamp? lastActive;
+  dynamic lastActive;
   bool? isOnline;
   String? fmcToken;
   bool? isAdmin;
-  String? lastMessage;
 
   UserModel({
     this.email,
@@ -27,12 +26,10 @@ class UserModel {
     this.isMessage,
     this.fmcToken,
     this.isAdmin,
-    this.lastMessage,
   });
   factory UserModel.fromJson(Map<String, dynamic> map) {
     return UserModel(
         uid: map['uid'] ?? '',
-        lastMessage: map['lastMessage'] ?? '',
         email: map['email'] ?? '',
         name: map['name'] ?? '',
         password: map['password'] ?? '',
@@ -47,7 +44,6 @@ class UserModel {
     return {
       'uid': uid,
       'email': email,
-      'lastMessage': lastMessage,
       'name': name,
       'password': password,
       'image': image,
@@ -65,7 +61,6 @@ class UserModel {
       "email": email,
       "name": name,
       "password": password,
-      'lastMessage': lastMessage,
       "image": image,
       "isOnline": isOnline,
       "isMessage": isMessage,

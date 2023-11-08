@@ -30,7 +30,7 @@ class Notifications{
     Notifications noti=Notifications();
     noti.title = map['title'];
     noti.description = map['description'];
-    noti.createdAt = map['createdAt'] as Timestamp;
+    noti.createdAt = map['createdAt'] ?? FieldValue.serverTimestamp();
     noti.id = map['id'];
     noti.type = map['type'];
     noti.subId = map['subId'];

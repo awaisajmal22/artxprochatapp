@@ -21,7 +21,7 @@ class AllUsersViewModel extends GetxController {
   }
 
   getUsers() async {
-    usersList.value = await FirebaseUserServices().getUsersList();
+    usersList.value = await FirebaseUserServices().getUsersList2();
     // print(usersList.length);
     if (usersList.isNotEmpty || usersList != null) {
       isLoading.value = false;

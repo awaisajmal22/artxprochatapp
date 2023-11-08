@@ -7,7 +7,7 @@ class UserModel {
   String? password;
   String? image;
   bool? isMessage;
-  Timestamp? lastActive;
+  FieldValue? lastActive;
   bool? isOnline;
   String? fmcToken;
 

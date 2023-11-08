@@ -80,6 +80,7 @@ dependencies:
   dropdown_button2: ^2.1.4
   emoji_picker_flutter: ^1.6.3
   custom_clippers: ^2.0.0
+  zego_uikit_prebuilt_call: ^3.16.1
  
 
   

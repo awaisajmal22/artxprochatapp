@@ -1,25 +1,28 @@
 import 'dart:math';
 
 import 'package:artxprochatapp/App/Auth/Signup/Model/user_model.dart';
+import 'package:artxprochatapp/App/CreatGroup/Model/group_model.dart';
+import 'package:artxprochatapp/App/GroupChat/ViewModel/group_chat_view_model.dart';
 import 'package:artxprochatapp/App/SingleChat/View/component/emoji_picker.dart';
 import 'package:artxprochatapp/App/SingleChat/ViewModel/single_chat_view_model.dart';
 import 'package:artxprochatapp/Utils/SizeConfig/size_config.dart';
 import 'package:custom_clippers/custom_clippers.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../../../Utils/AppGradient/gradient.dart';
-import '../../../Utils/PopupMenu/popup_menu_view.dart';
-import '../../../Utils/TextField/text_form_field.dart';
+import '../../../../Utils/AppGradient/gradient.dart';
+import '../../../../Utils/PopupMenu/popup_menu_view.dart';
+import '../../../../Utils/TextField/text_form_field.dart';
 import 'component/message_tile.dart';
 
-class SingleChatView extends StatelessWidget {
-  SingleChatView({super.key});
-  UserModel user = Get.arguments;
-  final singleChatVM = Get.find<SingleChatViewModel>();
+class GroupChatView extends StatelessWidget {
+  GroupChatView({super.key});
+  GroupModel group = Get.arguments;
+  final groupChatVM = Get.find<GroupChatViewModel>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,9 +51,10 @@ class SingleChatView extends StatelessWidget {
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${user.name}',
+                          '${group.groupName}',
                           style:
                               Theme.of(context).textTheme.titleLarge!.copyWith(
                                     fontSize: 20,
@@ -59,14 +63,8 @@ class SingleChatView extends StatelessWidget {
                                   ),
                         ),
                         Text(
-                          singleChatVM.reciever.value.isOnline == true
-                              ? 'Online'
-                              : 'Offline',
-                          style: TextStyle(
-                              color:
-                                  singleChatVM.reciever.value.isOnline == true
-                                      ? Colors.green
-                                      : Colors.grey),
+                          "Members ${group.members!.length}",
+                          style: TextStyle(color: Colors.white),
                         ),
                       ],
                     ),
@@ -85,7 +83,7 @@ class SingleChatView extends StatelessWidget {
                           child: Icon(Ionicons.call),
                         ),
                         popUpMenu(
-                          popUpMenuList: singleChatVM.popupMenuList,
+                          popUpMenuList: groupChatVM.popupMenuList,
                           context,
                           (value) {},
                         )
@@ -104,20 +102,20 @@ class SingleChatView extends StatelessWidget {
           children: [
             Expanded(
                 child: Obx(
-              () => singleChatVM.messagesList.isEmpty
+              () => groupChatVM.messagesList.isEmpty
                   ? Center(
                       child: Text('No Message Yet...'),
                     )
                   : ListView.builder(
-                      controller: singleChatVM.scrollController,
-                      itemCount: singleChatVM.messagesList.length,
+                      controller: groupChatVM.scrollController,
+                      itemCount: groupChatVM.messagesList.length,
                       itemBuilder: (context, index) {
                         return MessageTile(
-                          date: singleChatVM.messagesList[index].dateTime!,
-                          message: singleChatVM.messagesList[index].msg!,
+                          date: groupChatVM.messagesList[index].dateTime!,
+                          message: groupChatVM.messagesList[index].msg!,
                           messageType:
-                              singleChatVM.messagesList[index].senderUid ==
-                                      singleChatVM.currentUserUID
+                              groupChatVM.messagesList[index].senderUid ==
+                                      groupChatVM.currentUserUID
                                   ? MessageType.send
                                   : MessageType.receive,
                         );
@@ -134,18 +132,18 @@ class SingleChatView extends StatelessWidget {
                 Expanded(
                     child: Obx(
                   () => chatFormField(
-                    isShowCamera: singleChatVM.isShowCamera.value,
+                    isShowCamera: groupChatVM.isShowCamera.value,
                     attachFile: () {},
                     cameraImage: () {},
                     topPadding: 15,
                     context: context,
-                    controller: singleChatVM.messageController,
+                    controller: groupChatVM.messageController,
                     hintText: 'Message...',
                     onChange: (value) {
                       if (value.isNotEmpty) {
-                        singleChatVM.isShowCamera.value = false;
+                        groupChatVM.isShowCamera.value = false;
                       } else if (value.isEmpty) {
-                        singleChatVM.isShowCamera.value = true;
+                        groupChatVM.isShowCamera.value = true;
                       }
                     },
                     keyboardType: TextInputType.text,
@@ -155,7 +153,7 @@ class SingleChatView extends StatelessWidget {
                   width: SizeConfig.widthMultiplier * 2,
                 ),
                 Obx(
-                  () => singleChatVM.isShowCamera.value == true
+                  () => groupChatVM.isShowCamera.value == true
                       ? GestureDetector(
                           onTap: () {},
                           child: gradientCircle(
@@ -166,17 +164,17 @@ class SingleChatView extends StatelessWidget {
                         )
                       : GestureDetector(
                           onTap: () {
-                            print(
-                              singleChatVM.reciever.value.fmcToken!,
-                            );
-                            singleChatVM.sendTextMessage(
-                              msg: singleChatVM.messageController.text,
-                              recieverToken:
-                                  singleChatVM.reciever.value.fmcToken ?? user.fmcToken!,
-                              isPickedFile: false,
-                              receiverUID: singleChatVM.reciever.value.uid!,
-                              currentUser: singleChatVM.currentUser.value,
-                            );
+                            if (groupChatVM.messageController.text != '') {
+                              groupChatVM.sendMessage(
+                                currentUser: groupChatVM.currentUserData.value,
+                                msg: groupChatVM.messageController.text,
+                                isPickedFile: false,
+                                senderUID:
+                                    FirebaseAuth.instance.currentUser!.uid,
+                                groupmembers: group.members!,
+                                groupName: group.groupName!,
+                              );
+                            }
                           },
                           child: gradientCircle(
                               child: Padding(
@@ -193,15 +191,7 @@ class SingleChatView extends StatelessWidget {
             SizedBox(
               height: SizeConfig.widthMultiplier * 2,
             ),
-            // emojiPicker(
-            //     onSelectEmoji: (category, emoji) {
-            //       singleChatVM.messageController.text =
-            //           singleChatVM.messageController.text + emoji.emoji;
-            //     },
-            //     context: context,
-            //     emojiShowing: singleChatVM.isEmojiShowing,
-            //     controller: singleChatVM.emojiController,
-            //     onBackspacePressed: singleChatVM.onBackspacePressed)
+           
           ],
         ),
       ),

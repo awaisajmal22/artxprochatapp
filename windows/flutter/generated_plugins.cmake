@@ -6,10 +6,12 @@ list(APPEND FLUTTER_PLUGIN_LIST
   agora_rtc_engine
   audioplayers_windows
   awesome_notifications
+  cloud_firestore
   emoji_picker_flutter
   file_selector_windows
   firebase_auth
   firebase_core
+  firebase_storage
   just_audio_windows
   libwinmedia
   permission_handler_windows

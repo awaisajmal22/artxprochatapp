@@ -226,8 +226,12 @@ class CreateGroupView extends StatelessWidget {
                                       if (creatGroupVM.groupUserList.contains(
                                           creatGroupVM.filteredUsers[index])) {
                                       } else {
+                                     
                                         creatGroupVM.groupUserList.add(
                                             creatGroupVM.filteredUsers[index]);
+                                        creatGroupVM.groupUserUdisList.add(
+                                            creatGroupVM
+                                                .filteredUsers[index].uid!);
                                       }
                                     },
                                     child: Padding(

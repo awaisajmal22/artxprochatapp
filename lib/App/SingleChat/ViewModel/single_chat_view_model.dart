@@ -42,13 +42,13 @@ class SingleChatViewModel extends GetxController {
   }
 
   Rx<UserModel> reciever = UserModel().obs;
-  UserModel? getUserByID({required String uid}) {
+  UserModel getUserByID({required String uid}) {
     FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
         .snapshots()
         .listen((user) {
-      reciever.value = UserModel.fromJson(user.data()!);
+      reciever.value = UserModel.fromJson(user.data() as Map<String, dynamic>);
     });
     return reciever.value;
   }
@@ -111,6 +111,8 @@ class SingleChatViewModel extends GetxController {
 
     return messagesList;
   }
+
+ 
 
   final scrollController = ScrollController();
   void scrollDOwn() {

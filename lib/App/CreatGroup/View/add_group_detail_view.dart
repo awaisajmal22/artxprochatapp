@@ -23,6 +23,7 @@ class AddGroupDetailView extends StatelessWidget {
         context: context,
         onTap: () {
           creatGroupVM.creatGroup(
+            selecetedUsersUIDs: creatGroupVM.groupUserUdisList,
             groupName: creatGroupVM.groupNameController.text,
             groupImage: creatGroupVM.imagePath.value,
             selectedUsers: creatGroupVM.groupUserList,

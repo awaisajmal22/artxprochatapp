@@ -10,6 +10,7 @@ import '../App/Auth/Signup/ViewModel/signup_view_model.dart';
 import '../App/CreatGroup/View/add_group_detail_view.dart';
 import '../App/CreatGroup/View/create_group_view.dart';
 import '../App/CreatGroup/ViewModel/create_group_view_model.dart';
+import '../App/GroupChat/View/group_chat_view.dart';
 import '../App/Home/View/home_view.dart';
 import '../App/Home/ViewModel/home_view_model.dart';
 import '../App/SingleChat/ViewModel/single_chat_view_model.dart';
@@ -18,6 +19,7 @@ import '../App/Splash/ViewModel/splash_view_model.dart';
 // import '../AppModule/GroupChatModule/View/group_chat_view.dart';
 // import '../AppModule/GroupChatModule/ViewModel/group_chat_view_model.dart';
 // import '../AppModule/ProfileModule/View/profile_view.dart';
+import '../App/GroupChat/ViewModel/group_chat_view_model.dart';
 import 'app_routes.dart';
 
 class AppPages {
@@ -49,9 +51,10 @@ class AppPages {
         page: () => HomeView(),
         binding: BindingsBuilder(() {
           Get.lazyPut(() => HomeViewModel());
-
+            Get.lazyPut(() => GroupChatViewModel());
+Get.lazyPut(() => SingleChatViewModel());
           // Get.lazyPut(() => LoginViewModel());
-          Get.lazyPut(() => SingleChatViewModel());
+          
           // Get.lazyPut(() => GroupChatViewModel());
         })),
     // GetPage(
@@ -100,14 +103,14 @@ class AppPages {
     //     binding: BindingsBuilder(() {
     //       Get.lazyPut(() => ProfileViewModel());
     //     })),
-    // GetPage(
-    //     name: AppRoutes.directoryView,
-    //     transition: Transition.fade,
-    //     page: () => DirectoryView(),
-    //     binding: BindingsBuilder(() {
-    //       Get.lazyPut(() => DirectoryViewModel());
-    //       Get.lazyPut(() => GroupChatViewModel());
-    //     })),
+    GetPage(
+        name: AppRoutes.groupView,
+        transition: Transition.fade,
+        page: () => GroupChatView(),
+        binding: BindingsBuilder(() {
+          // Get.lazyPut(() => DirectoryViewModel());
+          Get.lazyPut(() => GroupChatViewModel());
+        })),
     GetPage(
         name: AppRoutes.allUsersView,
         transition: Transition.fade,

@@ -101,13 +101,13 @@ class SignUpViewModel extends GetxController {
     userModel.email = user!.email;
     userModel.name = name;
     userModel.uid = user.uid;
-    userModel.lastActive = Timestamp.now();
+    userModel.lastActive = FieldValue.serverTimestamp();
     userModel.fmcToken = await FirebaseMessaging.instance.getToken();
 
     await firebaseFirestore
         .collection("users")
         .doc(user.uid)
-        .set(userModel.toMap());
+        .set(userModel.toJson());
     toast(
         title: "Account Created Successfully :", backgroundColor: Colors.black);
     Get.offAllNamed(AppRoutes.loginView);

@@ -1,19 +1,23 @@
+import 'package:artxprochatapp/App/GroupChat/ViewModel/group_chat_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../RoutesAndBindings/app_routes.dart';
 import '../../../../Utils/SizeConfig/size_config.dart';
 import '../../ViewModel/home_view_model.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class GroupView extends StatelessWidget {
-  const GroupView({
+  GroupView({
     super.key,
   });
+
+  final groupChatVM = Get.find<GroupChatViewModel>();
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<HomeViewModel>(builder: (homeVM) {
-      return homeVM.groupsList.length <= 1
+      return homeVM.groupsList.length < 1
           ? Center(
               child: Text('No Group Created Yet..',
                   style: Theme.of(context).textTheme.titleLarge),
@@ -24,7 +28,12 @@ class GroupView extends StatelessWidget {
               physics: BouncingScrollPhysics(),
               itemBuilder: (context, index) {
                 return GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    groupChatVM.getGroupMessages(
+                        groupName: homeVM.groupsList[index].groupName!);
+                    Get.toNamed(AppRoutes.groupView,
+                        arguments: homeVM.groupsList[index]);
+                  },
                   child: Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: SizeConfig.widthMultiplier * 2),

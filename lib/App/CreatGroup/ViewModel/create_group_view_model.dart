@@ -23,6 +23,7 @@ class CreateGroupViewModel extends GetxController {
   RxBool isSearch = false.obs;
   RxList<UserModel> filteredUsers = <UserModel>[].obs;
   RxList<UserModel> groupUserList = <UserModel>[].obs;
+  RxList<String> groupUserUdisList = <String>[].obs;
   void filterUsers(String query) {
     filteredUsers.value = usersList
         .where((user) => user.name!.toLowerCase().contains(query.toLowerCase()))
@@ -30,7 +31,7 @@ class CreateGroupViewModel extends GetxController {
   }
 
   getUsers() async {
-    usersList.value = await FirebaseUserServices().getUsersList();
+    usersList.value = await FirebaseUserServices().getUsersList2();
 
     if (usersList.isNotEmpty || usersList != null) {
       isLoading.value = false;
@@ -74,6 +75,7 @@ class CreateGroupViewModel extends GetxController {
     required String groupName,
     required String groupImage,
     required List<UserModel> selectedUsers,
+    required List<String> selecetedUsersUIDs,
   }) async {
     if (groupName.isNotEmpty && groupImage.isNotEmpty) {
       if (groupImage != null || groupImage != '') {
@@ -95,18 +97,24 @@ class CreateGroupViewModel extends GetxController {
             // isAddedToGroup: true
           );
           selectedUsers.insert(0, currentUser);
+          selecetedUsersUIDs.insert(0, currentUser.uid!);
           final groupModel = GroupModel(
-              uid: [FirebaseAuth.instance.currentUser!.uid],
+              uid: selecetedUsersUIDs,
               groupImage: picture,
               groupName: groupName,
               dateTime: DateTime.now().toIso8601String(),
               members: selectedUsers);
           FirebaseGroupServices().createGroup(
+            membersList: selectedUsers,
             model: groupModel,
           );
+
           imagePath.value = '';
-          Get.offAllNamed(AppRoutes.homeView);
-          groupUserList.value = [];
+          Get.offAllNamed(AppRoutes.homeView)?.whenComplete(() {
+            groupUserUdisList.clear();
+            groupUserList.clear();
+          });
+          // groupUserList.value = [];
           groupNameController.clear();
           final homeVM = Get.put(HomeViewModel());
           homeVM.getGroupsList();

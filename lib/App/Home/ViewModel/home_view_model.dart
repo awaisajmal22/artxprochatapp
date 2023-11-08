@@ -12,6 +12,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../RoutesAndBindings/app_routes.dart';
 import '../../../Utils/Models/popUpMenu_model.dart';
+import '../../../Utils/SizeConfig/size_config.dart';
+import '../../SingleChat/Model/message_model.dart';
+import '../Model/specific_message_model.dart';
 
 class HomeViewModel extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -26,9 +29,13 @@ class HomeViewModel extends GetxController
   List<String> dropDownList = <String>['New Group', 'Settings'].obs;
   List<Tab> tabs = [
     Tab(
-      icon: Icon(Ionicons.chatbox),
+      height: SizeConfig.heightMultiplier * 5.85,
+      icon: Icon(
+        Ionicons.chatbox,
+      ),
     ),
     Tab(
+      height: SizeConfig.heightMultiplier * 5.85,
       icon: Icon(Ionicons.people),
     )
   ];
@@ -37,19 +44,52 @@ class HomeViewModel extends GetxController
   RxBool isLoadingChatView = true.obs;
 
   getUsersList() async {
-    userChatList.value = await FirebaseUserServices().getUsersList();
-
-    if (userChatList.isNotEmpty) {
-      // loading.value = false;
+    userChatList.value =
+        await FirebaseUserServices().getUsersList().whenComplete(() {
+      isLoadingChatView.value = false;
       print(true);
-      print('user List is not Empty');
-      for (var data in userChatList) {
-        if (data.isMessage == true) {
-          usersList.value = userChatList;
-          isLoadingChatView.value = true;
+      if (userChatList.isNotEmpty) {
+        // loading.value = false;
+
+        print('user List is not Empty');
+        for (var data in userChatList) {
+          if (data.uid != currentUser!.uid) {
+            usersList.value = userChatList;
+            isLoadingChatView.value = false;
+          }
         }
       }
-    }
+    });
+  }
+
+  RxList<SpecificMsgModel> specificMessagesList = <SpecificMsgModel>[].obs;
+  RxList<String> specificMessagesIntList = <String>[].obs;
+  Future getSpecificMessages() async {
+    print(FirebaseAuth.instance.currentUser!.uid);
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('chat')
+        .orderBy('dateTime', descending: true)
+        .snapshots()
+        .listen((event) {
+      specificMessagesList.clear();
+      specificMessagesIntList.clear();
+
+      specificMessagesList.value =
+          event.docs.map((e) => SpecificMsgModel.fromJson(e.data())).toList();
+      print(specificMessagesList.length);
+      for (int i = 0; i < userChatList.length; i++) {
+        for (int x = 0; x < specificMessagesList.length; x++) {
+          if (userChatList[i].uid == specificMessagesList[x].uid) {
+            specificMessagesIntList.add(specificMessagesList[x].uid!);
+            print(specificMessagesIntList.length);
+          }
+        }
+      }
+    });
+
+    // });
   }
 
   RxBool isPersonAddedToGroup = false.obs;
@@ -97,6 +137,7 @@ class HomeViewModel extends GetxController
 
     getUsersList();
     getGroupsList();
+    getSpecificMessages();
     super.onInit();
 
     scrollController.addListener(

@@ -113,9 +113,18 @@ class FirebaseMessagesServices {
     await FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('chat')
+        .doc(receiverUID)
+        .set({
+      "uid": receiverUID,
+      "msg": message.msg,
+      "dateTime": message.dateTime
+    });
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
         .update({
       "isMessage": true,
-      "lastMessage": message.msg,
     });
 
     await FirebaseFirestore.instance
@@ -129,9 +138,18 @@ class FirebaseMessagesServices {
     await FirebaseFirestore.instance
         .collection('users')
         .doc(receiverUID)
+        .collection('chat')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .set({
+      "uid": FirebaseAuth.instance.currentUser!.uid,
+      "msg": message.msg,
+      "dateTime": message.dateTime
+    });
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(receiverUID)
         .update({
       "isMessage": true,
-      "lastMessage": message.msg,
     });
   }
 

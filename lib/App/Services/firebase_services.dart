@@ -212,21 +212,21 @@ class FirebaseGroupServices {
 
   createGroup({
     required GroupModel model,
+    required List<UserModel> membersList,
   }) async {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(_currentUser)
-        .collection('Groups')
-        .doc(model.groupName)
-        .set(model.toJson());
-    // await FirebaseFirestore.instance
-    //     .collection('users')
-    //     .doc(_currentUser)
-    //     .collection('Groups')
-    //     .doc(model.groupName)
-    //     .collection("Members")
-    //     .doc(_currentUser)
-    //     .set(currentMember.toJson());
+  
+      for (var user in membersList) {
+        
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .collection('Groups')
+              .doc(model.groupName)
+              .set(model.toJson());
+          print("uid" "${user.uid}");
+        
+      }
+  
   }
 
   final groupsCollection = FirebaseFirestore.instance
@@ -380,6 +380,20 @@ class FirebaseUserServices {
   CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('users');
   Future<List<UserModel>> getUsersList() async {
+    // Get the current user
+    RxList<UserModel> userChatList = <UserModel>[].obs;
+
+    usersCollection.snapshots(includeMetadataChanges: true).listen((data) {
+      final users = data.docs
+          .map((e) => UserModel.fromJson(e.data() as Map<String, dynamic>))
+          .toList();
+      userChatList.value = users;
+    });
+
+    return userChatList;
+  }
+
+  Future<List<UserModel>> getUsersList2() async {
     // Get the current user
     RxList<UserModel> userChatList = <UserModel>[].obs;
 

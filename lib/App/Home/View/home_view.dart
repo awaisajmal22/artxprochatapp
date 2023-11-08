@@ -1,3 +1,4 @@
+import 'package:artxprochatapp/App/SingleChat/ViewModel/single_chat_view_model.dart';
 import 'package:artxprochatapp/Utils/PopupMenu/popup_menu_view.dart';
 import 'package:artxprochatapp/RoutesAndBindings/app_routes.dart';
 import 'package:artxprochatapp/Utils/SizeConfig/size_config.dart';
@@ -17,12 +18,12 @@ import 'Component/search_textField_view.dart';
 class HomeView extends StatelessWidget {
   HomeView({super.key});
   final homeVM = Get.find<HomeViewModel>();
+  final singleChatVM = Get.find<SingleChatViewModel>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: floatingButton(
         onTap: () {
-          print(homeVM.usersList.length);
           Get.toNamed(AppRoutes.allUsersView);
         },
         context: context,
@@ -41,12 +42,15 @@ class HomeView extends StatelessWidget {
                 Obx(
                   () => homeVM.isSearchBarShow == true
                       ? searchSilverAppBar(context: context, homeVM: homeVM)
-                      : silverAppBar(context),
+                      : silverAppBar(context, homeVM),
                 ),
                 SliverFillRemaining(
                   child:
                       TabBarView(controller: homeVM.tabController, children: [
-                    ChatView(),
+                    ChatView(
+                      homeVM: homeVM,
+                      singleChatVM: singleChatVM,
+                    ),
                     GroupView(),
                   ]),
                 )
@@ -58,7 +62,7 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget silverAppBar(BuildContext context) {
+  Widget silverAppBar(BuildContext context, HomeViewModel homeVM) {
     return SliverAppBar(
       backgroundColor: Colors.transparent,
       bottom: PreferredSize(
@@ -66,6 +70,18 @@ class HomeView extends StatelessWidget {
             SizeConfig.heightMultiplier * 6.15),
         child: gradient(
           child: TabBar(
+            indicator: BoxDecoration(
+              gradient: LinearGradient(colors: [
+                Color(0xff4E4FA2),
+                Color(0xff3F74BA),
+              ], transform: GradientRotation(1.5)),
+            ),
+            indicatorSize: TabBarIndicatorSize.tab,
+            onTap: (int) {
+              if (int == 0) {
+                // homeVM.getUsersList();
+              }
+            },
             labelColor: Colors.white,
             unselectedLabelColor:
                 Theme.of(context).canvasColor.withOpacity(0.3),
