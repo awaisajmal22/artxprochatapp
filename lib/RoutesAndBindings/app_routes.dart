@@ -13,4 +13,5 @@ abstract class AppRoutes {
   static const allUsersView = '/allUsersView';
   static const createGroupView = '/createGroupView';
   static const addGroupDetailView = '/addGroupDetailView';
+  static const audioCallView = '/audioCallView';
 }

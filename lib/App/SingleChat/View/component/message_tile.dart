@@ -1,18 +1,25 @@
+import 'package:artxprochatapp/App/SingleChat/ViewModel/single_chat_view_model.dart';
 import 'package:artxprochatapp/Utils/AppGradient/gradient.dart';
 import 'package:artxprochatapp/Utils/SizeConfig/size_config.dart';
 import 'package:custom_clippers/custom_clippers.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class MessageTile extends StatelessWidget {
+  final singleChatVM = Get.put(SingleChatViewModel());
   final String message;
   final String date;
+  String fileName;
+
   final MessageType messageType;
-  const MessageTile(
+  MessageTile(
       {super.key,
       required this.message,
       required this.messageType,
+      this.fileName = '',
       required this.date});
 
   @override
@@ -38,13 +45,53 @@ class MessageTile extends StatelessWidget {
                         left: 25,
                       ),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(message),
+                          // fileName != ''
+                          //     ? Obx(() => LinearProgressIndicator(
+                          //           value: singleChatVM.progress.value,
+                          //           color: Colors.red,
+                          //           minHeight: 2,
+                          //         ))
+                          //     : SizedBox.shrink(),
+                          if (message.contains(".jpeg") ||
+                              message.contains('.png') ||
+                              message.contains('jpg'))
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.network(
+                                message,
+                                height: SizeConfig.heightMultiplier * 20,
+                                width: SizeConfig.widthMultiplier * 60,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          else
+                            Text(message),
                           Padding(
                             padding: const EdgeInsets.only(top: 8.0),
-                            child:
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
                                 Text("${timeago.format(DateTime.parse(date))}"),
+                                if (message.contains(".jpeg") ||
+                                    message.contains('.png') ||
+                                    message.contains('jpg'))
+                                  Spacer(),
+                                if (message.contains(".jpeg") ||
+                                    message.contains('.png') ||
+                                    message.contains('jpg'))
+                                  GestureDetector(
+                                    onTap: () {
+                                      singleChatVM.downloadFile(
+                                          message, fileName);
+                                    },
+                                    child: Icon(Ionicons.download),
+                                  ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -69,11 +116,52 @@ class MessageTile extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(message),
+                          // fileName != ''
+                          //     ? Obx(() => LinearProgressIndicator(
+                          //           value: singleChatVM.progress.value,
+                          //           color: Colors.red,
+                          //           minHeight: 2,
+                          //         ))
+                          //     : SizedBox.shrink(),
+                          if (message.contains(".jpeg") ||
+                              message.contains('.png') ||
+                              message.contains('jpg'))
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.network(
+                                message,
+                                height: SizeConfig.heightMultiplier * 20,
+                                width: SizeConfig.widthMultiplier * 60,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          else
+                            Text(message),
                           Padding(
                             padding: const EdgeInsets.only(top: 8.0),
-                            child:
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                if (message.contains(".jpeg") ||
+                                    message.contains('.png') ||
+                                    message.contains('jpg'))
+                                  GestureDetector(
+                                    onTap: () {
+                                      print(fileName);
+                                      singleChatVM.downloadFile(
+                                          message, fileName);
+                                    },
+                                    child: Icon(Ionicons.download),
+                                  ),
+                                if (message.contains(".jpeg") ||
+                                    message.contains('.png') ||
+                                    message.contains('jpg'))
+                                  Spacer(),
                                 Text("${timeago.format(DateTime.parse(date))}"),
+                              ],
+                            ),
                           ),
                         ],
                       ),

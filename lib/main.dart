@@ -14,6 +14,7 @@ import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 // import 'AppModule/AuthModule/SignUp/Model/user_model.dart';
 import 'RoutesAndBindings/app_pages.dart';
@@ -22,7 +23,6 @@ import 'Utils/SizeConfig/size_config.dart';
 import 'Utils/Theme/app_theme.dart';
 import 'Utils/Theme/theme.dart';
 import 'firebase_options.dart';
-
 void getNotification() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   messaging.requestPermission(
@@ -49,6 +49,7 @@ Future<void> main() async {
     final fcmToken = await FirebaseMessaging.instance.getToken();
     print(fcmToken);
   }
+
   runApp(const MyApp());
 }
 
@@ -62,6 +63,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+   
+
   @override
   void initState() {
     super.initState();

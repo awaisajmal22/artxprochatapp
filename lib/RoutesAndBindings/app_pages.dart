@@ -1,8 +1,10 @@
 import 'package:artxprochatapp/App/AllUsers/View/all_users_view.dart';
+import 'package:artxprochatapp/App/AudioVideoCall/AudioCall/View/audio_call_view.dart';
 import 'package:artxprochatapp/App/SingleChat/View/single_chat_view.dart';
 import 'package:get/get.dart';
 
 import '../App/AllUsers/ViewModel/all_users_view_model.dart';
+import '../App/AudioVideoCall/AudioCall/ViewModel/audio_call_view_model.dart';
 import '../App/Auth/Login/View/login_view.dart';
 import '../App/Auth/Login/ViewModel/login_view_model.dart';
 import '../App/Auth/Signup/View/signup_view.dart';
@@ -52,6 +54,18 @@ class AppPages {
         binding: BindingsBuilder(() {
           Get.lazyPut(() => HomeViewModel());
             Get.lazyPut(() => GroupChatViewModel());
+Get.lazyPut(() => SingleChatViewModel());
+          // Get.lazyPut(() => LoginViewModel());
+          
+          // Get.lazyPut(() => GroupChatViewModel());
+        })),
+    GetPage(
+        name: AppRoutes.audioCallView,
+        transition: Transition.fade,
+        page: () => AudioCallView(),
+        binding: BindingsBuilder(() {
+          Get.lazyPut(() => HomeViewModel());
+            Get.lazyPut(() => AudioCallViewModel());
 Get.lazyPut(() => SingleChatViewModel());
           // Get.lazyPut(() => LoginViewModel());
           

@@ -8,3 +8,12 @@ class WraperModel {
     required this.title,
   });
 }
+
+class AnimatedWraperModel {
+  final IconData icon;
+  final String title;
+  AnimatedWraperModel({
+    required this.icon,
+    required this.title,
+  });
+}

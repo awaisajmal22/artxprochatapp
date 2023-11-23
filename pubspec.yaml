@@ -73,15 +73,16 @@ dependencies:
   image_gallery_saver: ^2.0.3
   flutter_svg: ^2.0.5
   flutter_launcher_icons: ^0.13.1
-  awesome_notifications: ^0.8.2
+  awesome_notifications: ^0.7.4+1
   url_launcher: ^6.1.11
-  audioplayers: ^4.1.0
-  flutter_audio_waveforms: ^1.2.1+8
+  audioplayers: ^1.0.1
+  audio_waveforms: ^1.0.4 
   dropdown_button2: ^2.1.4
   emoji_picker_flutter: ^1.6.3
   custom_clippers: ^2.0.0
-  zego_uikit_prebuilt_call: ^1.1.4
-  zego_uikit_signaling_plugin: ^2.6.6
+  zego_uikit_prebuilt_call: ^3.1.0
+  # zego_uikit_signaling_plugin: ^2.0.3
+  
   
  
 
